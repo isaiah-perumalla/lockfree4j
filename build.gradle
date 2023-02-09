@@ -1,11 +1,17 @@
+
 plugins {
     id 'java'
     id 'java-library'
     id 'com.github.johnrengelman.shadow' version '7.1.2' apply true
+    id "io.github.reyerizo.gradle.jcstress" version "0.8.14"
 }
+
+def jcstressVersion = '0.15'
+
 def jmhVersion = '1.35'
 group 'xyz.isaiahp'
 version '1.0-SNAPSHOT'
+
 
 sourceSets {
     jmh {
@@ -16,18 +22,34 @@ sourceSets {
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 dependencies {
+    implementation 'org.agrona:agrona:1.17.1'
     jmhImplementation project
     jmhImplementation "org.openjdk.jmh:jmh-core:${jmhVersion}"
     jmhAnnotationProcessor "org.openjdk.jmh:jmh-generator-annprocess:${jmhVersion}"
+    compileClasspath "org.openjdk.jcstress:jcstress-core:${jcstressVersion}"
+    testCompileOnly 'org.agrona:agrona:1.17.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 
+apply plugin: 'jcstress'
 apply plugin: 'com.github.johnrengelman.shadow'
+
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+jcstress {
+    jcstressDependency "org.openjdk.jcstress:jcstress-core:${jcstressVersion}"
+}
+
+//jcstress {
+//    verbose = true
+//    timeMillis = "200"
+//    spinStyle = "THREAD_YIELD"
+//}
 
 task benchmarkJar(type: ShadowJar) {
 
