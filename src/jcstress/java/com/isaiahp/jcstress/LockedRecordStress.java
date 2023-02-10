@@ -1,32 +1,35 @@
 package com.isaiahp.jcstress;
 
-import com.isaiahp.concurrent.VolatileRecord;
+import com.isaiahp.concurrent.LockedRecord;
 import org.openjdk.jcstress.annotations.*;
 import org.openjdk.jcstress.infra.results.JJJJ_Result;
 
 import static org.openjdk.jcstress.annotations.Expect.*;
 
 @JCStressTest
-@JCStressMeta(StressUtils.class)
+// These are the test outcomes.
 @State
-public class VolatileRecordStress {
+@JCStressMeta(StressUtils.class)
+public class LockedRecordStress {
 
-    private static final VolatileRecord VOLATILE_RECORD = new VolatileRecord();
+    static final LockedRecord record = new LockedRecord();
     private static long version = 0;
 
 
     @Actor
     public void writer() {
-        version = StressUtils.doWrite(VOLATILE_RECORD, version);
+        version = StressUtils.doWrite(record, version);
     }
 
     @Actor
     public void reader0(JJJJ_Result r) {
-        StressUtils.doRead(r, VOLATILE_RECORD, 0);
+        StressUtils.doRead(r, record, 0);
     }
 
     @Actor
     public void reader1(JJJJ_Result r) {
-        StressUtils.doRead(r, VOLATILE_RECORD, 1);
+
+        StressUtils.doRead(r, record, 1);
     }
+
 }
