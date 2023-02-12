@@ -1,3 +1,6 @@
+![Build Status](https://github.com/isaiah-perumalla/seqlock4j/actions/workflows/gradle.yml/badge.svg)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/isaiah-perumall/seqlock4j/master/LICENSE)
+
 # SeqLock4j
 
 Various implementation of SeqLock in Java, it mostly there to study the Java memory model.
