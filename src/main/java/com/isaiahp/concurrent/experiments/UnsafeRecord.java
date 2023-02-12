@@ -37,7 +37,7 @@ public class UnsafeRecord implements SingleWriterRecord {
     public long write(long d0, long d1) {
         final long v = version;
         version = v + 1;
-//        UNSAFE.storeFence(); //ensure data write don't happen prior to version update
+        UNSAFE.storeFence(); //ensure data write don't happen prior to version update
 
         dataLong0 = d0;
         dataLong1 = d1;
