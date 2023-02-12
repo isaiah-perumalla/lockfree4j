@@ -1,6 +1,6 @@
 package com.isaiahp.jcstress;
 
-import com.isaiahp.concurrent.UnsafeRecord;
+import com.isaiahp.concurrent.experiments.UnsafeRecord;
 import org.openjdk.jcstress.annotations.*;
 import org.openjdk.jcstress.infra.results.JJJJ_Result;
 

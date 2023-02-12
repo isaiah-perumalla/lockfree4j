@@ -1,12 +1,14 @@
-package com.isaiahp.concurrent;
+package com.isaiahp.concurrent.experiments.broken;
 
+
+import com.isaiahp.concurrent.experiments.SingleWriterRecord;
 
 public class BrokenOrdering {
 
-    static BrokenSingleWriterRecord record = new BrokenSingleWriterRecord();
+    private static BrokenSingleWriterRecord record = new BrokenSingleWriterRecord();
 
-    static long readCount;
-    static long[] readBuffer = new long[16];
+    private static long readCount;
+    private static long[] readBuffer = new long[16];
 
     public static void main(String[] args) throws InterruptedException {
 

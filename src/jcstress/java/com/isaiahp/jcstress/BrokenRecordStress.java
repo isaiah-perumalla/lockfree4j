@@ -1,7 +1,7 @@
 package com.isaiahp.jcstress;
 
-import com.isaiahp.concurrent.BrokenOrdering;
-import com.isaiahp.concurrent.SingleWriterRecord;
+import com.isaiahp.concurrent.experiments.broken.BrokenOrdering;
+import com.isaiahp.concurrent.experiments.SingleWriterRecord;
 import org.openjdk.jcstress.annotations.Actor;
 import org.openjdk.jcstress.annotations.JCStressMeta;
 import org.openjdk.jcstress.annotations.JCStressTest;

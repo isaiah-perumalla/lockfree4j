@@ -1,4 +1,4 @@
-package com.isaiahp.concurrent;
+package com.isaiahp.concurrent.experiments;
 
 public interface SingleWriterRecord {
     long read(long[] result);

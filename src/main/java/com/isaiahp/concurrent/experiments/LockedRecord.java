@@ -1,11 +1,11 @@
-package com.isaiahp.concurrent;
+package com.isaiahp.concurrent.experiments;
 
-public class VolatileRecord implements SingleWriterRecord {
-    volatile long version = 0;
-    volatile long dataLong0 = 0;
-    volatile long dataLong1 = 0;
+public class LockedRecord implements SingleWriterRecord {
+    long version = 0;
+    long dataLong0 = 0;
+    long dataLong1 = 0;
 
-    public long read(long[] result) {
+    public synchronized long read(long[] result) {
         final long v1 = version;
         if ((v1 & 1) != 0) return -1;
 
@@ -16,7 +16,7 @@ public class VolatileRecord implements SingleWriterRecord {
         return v2;
     }
 
-    public long write(long d0, long d1) {
+    public synchronized long write(long d0, long d1) {
         final long v = version;
         version = v + 1;
         dataLong0 = d0;

@@ -1,6 +1,6 @@
 package com.isaiahp.jcstress;
 
-import com.isaiahp.concurrent.SingleWriterRecord;
+import com.isaiahp.concurrent.experiments.SingleWriterRecord;
 import org.openjdk.jcstress.annotations.Outcome;
 import org.openjdk.jcstress.infra.results.JJJJ_Result;
 

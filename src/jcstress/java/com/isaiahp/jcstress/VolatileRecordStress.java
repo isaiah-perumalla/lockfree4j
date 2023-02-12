@@ -1,10 +1,8 @@
 package com.isaiahp.jcstress;
 
-import com.isaiahp.concurrent.VolatileRecord;
+import com.isaiahp.concurrent.experiments.VolatileRecord;
 import org.openjdk.jcstress.annotations.*;
 import org.openjdk.jcstress.infra.results.JJJJ_Result;
-
-import static org.openjdk.jcstress.annotations.Expect.*;
 
 @JCStressTest
 @JCStressMeta(StressUtils.class)

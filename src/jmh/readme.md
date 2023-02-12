@@ -1,7 +1,7 @@
 ## Benchmarks
 1. build/create
 `./gradlew benchmarkJar`
-2. run bench `java -jar ./build/libs/benchmarks.jar`
+2. run bench `java -jar ./build/libs/benchmarks.jar <jhm_class>`
 
 ### Run JIT watch
 
