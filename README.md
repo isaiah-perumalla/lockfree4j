@@ -8,7 +8,12 @@ Reader might fail to aquire a consistent view, and should retry.
 
 
 ## Implementations
-There are several implementations, including some [broken versions]() , this is there to study and understand the Java memory model .
+There are several implementations, including some [broken versions](https://github.com/isaiah-perumalla/seqlock4j/tree/main/src/main/java/com/isaiahp/concurrent/experiments) , this is there to study and understand the Java memory model .
+
+### Jsctress
+included are Jcstress [verification test](https://github.com/isaiah-perumalla/seqlock4j/tree/main/src/jcstress) to ensure correctness of the implementation
+
+### Jmh Benchmarks
 
 
 ### Examine JIT C1/C2 output
