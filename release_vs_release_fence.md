@@ -127,3 +127,48 @@ Vendor ID:               ARM
 
 
 ```
+
+3. x86 server
+```agsl
+Architecture:                       x86_64
+CPU op-mode(s):                     32-bit, 64-bit
+Address sizes:                      46 bits physical, 48 bits virtual
+Byte Order:                         Little Endian
+CPU(s):                             48
+On-line CPU(s) list:                0-47
+Vendor ID:                          GenuineIntel
+Model name:                         Intel(R) Xeon(R) Silver 4214R CPU @ 2.40GHz
+CPU family:                         6
+Model:                              85
+Thread(s) per core:                 2
+Core(s) per socket:                 12
+Socket(s):                          2
+Stepping:                           7
+
+```
+
+results
+
+```agsl
+ JVM args: [-XX:+UnlockDiagnosticVMOptions, -XX:+WhiteBoxAPI, -XX:-RestrictContended, -Dfile.encoding=UTF-8, -Duser.country, -Duser.language=en, -Duser.variant, -XX:-TieredCompilation, -XX:+StressLCM, -XX:+StressGCM, -XX:+StressIGVN, -XX:+StressCCP, -XX:StressSeed=1644101404]
+  Fork: #1
+
+       RESULT     SAMPLES     FREQ       EXPECT  DESCRIPTION
+  false, 0, 0   4,807,735   10.08%   Acceptable  reads early before any writes
+  false, 0, 2           0    0.00%    Forbidden  write to value1, Re-ordered before releaseFence
+  false, 1, 0      17,226    0.04%   Acceptable  write value0 before release
+  false, 1, 2           0    0.00%    Forbidden  write to value1, Re-ordered before releaseFence
+   true, 0, 0      33,121    0.07%  Interesting  value0 read before done, reorders of reads after acquireF...
+   true, 1, 0           0    0.00%   Acceptable  release
+   true, 1, 2  42,836,338   89.81%   Acceptable  ok
+
+(ETA: in 00:00:02; at Mon, 2024-01-22 08:04:57)
+(Sampling Rate: 43.03 M/sec)
+(JVMs: 0 starting, 7 running, 0 finishing)
+(CPUs: 48 configured, 28 allocated)
+(Results: 72 planned; 65 passed, 0 failed, 0 soft errs, 0 hard errs)
+
+
+.......... [OK] com.isaiahp.jcstress.MemoryOrdering.PaddedAcquireReleaseReOrdering
+
+```
