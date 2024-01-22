@@ -1,5 +1,5 @@
-![Build Status](https://github.com/isaiah-perumalla/seqlock4j/actions/workflows/gradle.yml/badge.svg)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/isaiah-perumall/seqlock4j/master/LICENSE)
+![Build Status](https://github.com/isaiah-perumalla/lockfree4j/actions/workflows/gradle.yml/badge.svg)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/isaiah-perumall/lockfree4j/master/LICENSE)
 
 # LockFree4j
 
@@ -14,10 +14,10 @@ Reader might fail to aquire a consistent view, and should retry.
 
 
 ## Implementations
-There are several implementations, including some [broken versions](https://github.com/isaiah-perumalla/seqlock4j/tree/main/src/main/java/com/isaiahp/concurrent/experiments) , this is there to study and understand the Java memory model .
+There are several implementations, including some [broken versions](https://github.com/isaiah-perumalla/lockfree4j/tree/main/src/main/java/com/isaiahp/concurrent/experiments) , this is there to study and understand the Java memory model .
 
 ### Jsctress
-included are Jcstress [verification test](https://github.com/isaiah-perumalla/seqlock4j/tree/main/src/jcstress) to ensure correctness of the implementation
+included are Jcstress [verification test](https://github.com/isaiah-perumalla/lockfree4j/tree/main/src/jcstress) to ensure correctness of the implementation
 
 ### Jmh Benchmarks
 
