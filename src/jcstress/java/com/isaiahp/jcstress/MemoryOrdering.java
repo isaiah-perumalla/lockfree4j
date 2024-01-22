@@ -39,8 +39,8 @@ public class MemoryOrdering {
     @Outcome(id = "true, 0, 0", expect = ACCEPTABLE_INTERESTING, desc = "value0 read before done, reorders of reads after acquireFence is allowed ")
     @Outcome(id = "true, 1, 0", expect = ACCEPTABLE, desc = "release ")
     @Outcome(id = "true, 1, 2", expect = ACCEPTABLE, desc = "ok")
-    @Outcome(id = "false, 0, 2", expect = FORBIDDEN, desc = "write to value1, Re-ordered before release")
-    @Outcome(id = "false, 1, 2", expect = FORBIDDEN, desc = "write to value1, Re-ordered before release")
+    @Outcome(id = "false, 0, 2", expect = FORBIDDEN, desc = "write to value1, Re-ordered before release padded done")
+    @Outcome(id = "false, 1, 2", expect = FORBIDDEN, desc = "write to value1, Re-ordered before release padded done")
     @Outcome( expect = FORBIDDEN, desc = "not allowed")
     @State
     public static class PaddedAcquireReleaseReOrdering {
@@ -75,24 +75,20 @@ public class MemoryOrdering {
     @Outcome( expect = FORBIDDEN, desc = "not allowed")
     @State
     public static class AcquireReleaseReOrdering {
-
-
         private final Holder h1 = new Holder();
 
-
-
-
         @Actor
-        public void actor1() {
+        public void writerThread() {
             h1.value0 = 1;
             Holder.VH_DONE.setRelease(h1, true);
             h1.value1 = 2;
         }
 
         @Actor
-        public void actor2(ZJJ_Result r) {
+        public void readerThread(ZJJ_Result r) {
             final Holder h1 = this.h1;
             r.r3 = (long) Holder.VH_VALUE1.get(h1);
+
             VarHandle.acquireFence();//  read ensure value1 is read first before done
             r.r1 =  (boolean) Holder.VH_DONE.get(h1);
             r.r2 = (long) Holder.VH_VALUE0.get(h1);
@@ -118,7 +114,7 @@ public class MemoryOrdering {
 
 
         @Actor
-        public void actor1() {
+        public void writerThread() {
             h1.value0 = 1;
             Holder.VH_DONE.setRelease(h1, true);
             VarHandle.releaseFence();
@@ -127,7 +123,7 @@ public class MemoryOrdering {
         }
 
         @Actor
-        public void actor2(ZJJ_Result r) {
+        public void readerThread(ZJJ_Result r) {
             final Holder h1 = this.h1;
 
             r.r3 = (long) Holder.VH_VALUE1.get(h1);

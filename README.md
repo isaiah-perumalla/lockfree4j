@@ -1,9 +1,12 @@
 ![Build Status](https://github.com/isaiah-perumalla/seqlock4j/actions/workflows/gradle.yml/badge.svg)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/isaiah-perumall/seqlock4j/master/LICENSE)
 
-# SeqLock4j
+# LockFree4j
 
-Various implementation of SeqLock in Java, it mostly there to study the Java memory model.
+Experiment exploring Java memory model effects on different hardware.
+Various implementation of lock-free datastructures
+## Seqlock based data structures
+SeqLock in Java, it mostly there to study the Java memory model.
 SeqLock is a type of reader/writer synchronisation structure , it is a useful data structures if read are far more frequent than they are
 written. The implementation allows for a single writer thread and many reader threads.
 Writer thread is  **wait-free** , while the Reader thread(s) are **lock-free**.
