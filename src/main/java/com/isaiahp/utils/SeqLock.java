@@ -16,7 +16,7 @@ public class SeqLock {
         assert (version & 1) == 0 : "version should be even, illegal state";
         buffer.putLongOrdered(versionoffset, version + 1);
 
-        UnsafeAccess.UNSAFE.storeFence(); // dont want subsequent write to move above, todo isnt putOrderLong enough ?
+        UnsafeAccess.UNSAFE.storeFence(); // dont want subsequent write to move above,  **putOrderLong is not enough** see https://github.com/isaiah-perumalla/lockfree4j/blob/a65d18db7553834cbe3fd896e4a61794048df3c2/src/jcstress/java/com/isaiahp/jcstress/MemoryOrdering.java ?
 
         return version + 1;
     }
