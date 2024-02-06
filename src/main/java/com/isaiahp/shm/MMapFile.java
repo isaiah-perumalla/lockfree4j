@@ -1,5 +1,6 @@
 package com.isaiahp.shm;
 
+import com.isaiahp.utils.FileUtils;
 import org.agrona.IoUtil;
 import org.agrona.LangUtil;
 
@@ -28,10 +29,11 @@ public class MMapFile {
     public static MMapFile create(boolean readOnly, Path path, long size) {
         final FileChannel.MapMode mode = readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE;
         FileChannel channel = openFileChannel(path, StandardOpenOption.CREATE, StandardOpenOption.READ, StandardOpenOption.WRITE);
-        truncate(channel, size);
+        FileUtils.truncate(channel, size);
         if (mode == FileChannel.MapMode.READ_WRITE) {
             tryLockFile(channel, path);
         }
+
         final long bufferAddress = IoUtil.map(channel, mode, 0, size);
         return new MMapFile(channel, bufferAddress, path, size);
     }
@@ -47,10 +49,6 @@ public class MMapFile {
         if (fileLock == null) {
             throw new RuntimeException("failed to acquire lock on file " + path.getFileName());
         }
-    }
-
-    private static void truncate(FileChannel channel, long size) {
-
     }
 
 
@@ -80,5 +78,9 @@ public class MMapFile {
         finally {
             fileChannel = null;
         }
+    }
+
+    public long getBufferAddress() {
+        return bufferAddress;
     }
 }

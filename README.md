@@ -2,7 +2,11 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/isaiah-perumall/lockfree4j/master/LICENSE)
 
 # LockFree4j
+## requires java 17
+```shell
+JAVA_HOME=/opt/jdks/zulu17 ./gradlew build
 
+```
 Experiment exploring Java memory model effects on different hardware.
 Various implementation of lock-free datastructures
 ## Seqlock based data structures

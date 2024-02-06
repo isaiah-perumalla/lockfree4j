@@ -61,5 +61,8 @@ task benchmarkJar(type: ShadowJar) {
 }
 
 test {
+    jvmArgs('--add-opens', 'java.base/sun.nio.ch=ALL-UNNAMED')
     useJUnitPlatform()
 }
+sourceCompatibility = JavaVersion.VERSION_15
+targetCompatibility = JavaVersion.VERSION_15
