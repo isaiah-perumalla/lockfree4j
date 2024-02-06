@@ -1,9 +1,21 @@
-package com.isaiahp;
+package com.isaiahp.ascii;
+
+import org.agrona.AsciiSequenceView;
 
 public class Ascii {
-    public final static Hasher DEFAULT = (value, maxNumberOfKeys) -> hash(value) % maxNumberOfKeys;
+    public static boolean equals(CharSequence a, CharSequence b) {
+        assert a != null && b != null;
+        if (a.length() != b.length()) return false;
+        for (int i = 0; i < a.length(); i++) {
+            if (a.charAt(i) != b.charAt(i)) return false;
+        }
+        return true;
+    }
+
     public interface Hasher {
-        int hash(CharSequence c, int maxNumberOfKeys);
+        int hash(CharSequence c);
+
+        int index(int h);
     }
     public static int hash(CharSequence value) {
         assert value != null;

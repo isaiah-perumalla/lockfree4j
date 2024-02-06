@@ -1,6 +1,6 @@
 package com.isaiahp.concurrent.map;
 
-import com.isaiahp.Ascii;
+import com.isaiahp.ascii.Ascii;
 import com.isaiahp.concurrent.map.descriptors.KeyIndexDescriptor;
 import org.agrona.concurrent.UnsafeBuffer;
 
@@ -11,25 +11,31 @@ public class AsciiIndexMap {
     private final Ascii.Hasher hasher;
     private KeyIndexDescriptor keyIndexDescriptor;
 
-    public AsciiIndexMap(UnsafeBuffer buffer, int maxKeySize, int maxNumberOfKeys) {
-        this.hasher = Ascii.DEFAULT;
+    public AsciiIndexMap(UnsafeBuffer buffer, int maxKeySize, int maxNumberOfKeys, Ascii.Hasher asciiHasher) {
+        this.keyIndexDescriptor = new KeyIndexDescriptor(maxKeySize, maxNumberOfKeys);
+        this.keyIndexDescriptor.checkCapacity(buffer);
+        this.hasher = asciiHasher;
         this.buffer = buffer;
         this.maxKeySize = maxKeySize;
         this.maxNumberOfKeys = maxNumberOfKeys;
-        this.keyIndexDescriptor = new KeyIndexDescriptor(maxKeySize, maxNumberOfKeys);
+
     }
 
     public int addKey(CharSequence key) {
-        final int hashIndex = this.hasher.hash(key, maxNumberOfKeys);
-        int i = hashIndex;
+        final int hashIndex = this.hasher.hash(key);
+        for (int i = 0; i < maxNumberOfKeys; i++) {
+            final int index = hasher.index(hashIndex + i);
+            if (keyIndexDescriptor.isEmptySlot(index, buffer) || keyIndexDescriptor.isDeletedSlot(index, buffer)) {
+                keyIndexDescriptor.setCharSequenceAt(index, buffer, key);
+                return index;
+            }
 
-        while (!keyIndexDescriptor.isEmptySlot(i, buffer) && !keyIndexDescriptor.isDeletedSlot(i, buffer)) {
-                if (keyIndexDescriptor.valueEquals(i, key, buffer)) {
-                    return ~i; //key already exists
-                }
+            if (keyIndexDescriptor.valueEquals(index, key, buffer)) {
+                return ~index; //key already exists
+            }
         }
-        keyIndexDescriptor.setCharSequenceAt(i, buffer, key);
-        return i;
+        assert false : "all slots full illegal state";
+        return ~maxNumberOfKeys; // notify full
     }
 
 
@@ -48,5 +54,27 @@ public class AsciiIndexMap {
             dst[dstOffset + i] = b;
         }
         return maxKeySize;
+    }
+
+    public int getEntry(CharSequence key) {
+        final int hashIndex = this.hasher.hash(key);
+
+        for (int i = 0; i < maxKeySize; i++) {
+            final int index = hasher.index(hashIndex + i);
+            if(keyIndexDescriptor.isEmptySlot(index, buffer)) {
+                return ~index;
+            }
+            if (keyIndexDescriptor.valueEquals(index, key, buffer)) {
+                return index; //match
+            }
+            ;
+        }
+        assert false : "all slots full";
+        return ~maxNumberOfKeys;// notify all items scanned
+    }
+
+    public boolean removeEntry(int entry) {
+        assert entry >= 0 && entry < maxKeySize;
+        return keyIndexDescriptor.markDeleted(entry, buffer);
     }
 }

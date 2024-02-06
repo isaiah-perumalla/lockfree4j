@@ -30,12 +30,15 @@ import org.agrona.concurrent.UnsafeBuffer;
 
  */
 public class KeyIndexDescriptor {
-    public static final byte NULL_CHAR = (byte) '\0';
+    public static final byte NULL_CHAR =  '\0';
+    private static final byte DELETED_CHAR = '\1';
     private final int maxKeySize;
+    private final int maxNumberOfKeys;
 
     public KeyIndexDescriptor(int maxKeySize, int maxNumberOfKeys) {
 
         this.maxKeySize = maxKeySize;
+        this.maxNumberOfKeys = maxNumberOfKeys;
     }
 
 
@@ -77,5 +80,20 @@ public class KeyIndexDescriptor {
         }
         final boolean nullTerminated = buffer.getByte(offset + key.length()) == '\0';
         return nullTerminated;
+    }
+
+    public boolean markDeleted(int entry, UnsafeBuffer buffer) {
+        final int offset = getKeyOffsetForIndex(entry);
+        byte b = buffer.getByte(offset);
+        if (b == NULL_CHAR || b == DELETED_CHAR) return false;
+        buffer.putByte(offset, DELETED_CHAR);
+        return true;
+    }
+
+    public void checkCapacity(UnsafeBuffer buffer) {
+        assert buffer.capacity() >= maxKeySize * maxNumberOfKeys;
+        if (buffer.capacity() < maxKeySize * maxNumberOfKeys) {
+            throw new IllegalArgumentException("buffer size too small");
+        }
     }
 }
