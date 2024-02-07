@@ -4,6 +4,7 @@ import com.isaiahp.ascii.Ascii;
 import com.isaiahp.ascii.Djb2Hasher;
 import com.isaiahp.concurrent.map.AsciiIndexMap;
 import com.isaiahp.concurrent.map.MutableAsciiString;
+import com.isaiahp.concurrent.map.descriptors.KeyIndexDescriptor;
 import com.isaiahp.shm.MMapFile;
 import org.agrona.AsciiSequenceView;
 import org.agrona.BitUtil;
@@ -47,6 +48,8 @@ public class AsciiMapTest {
             throw new RuntimeException(e);
         }
     }
+//    @ParameterizedTest
+//    @MethodSource("checkExplicitMethodSourceArgs")
     @Test
     public void testAddRemoveFindEntry() {
 
@@ -57,12 +60,9 @@ public class AsciiMapTest {
                 return MAX_KEYS - 1;
             }
 
-            @Override
-            public int index(int h) {
-                return h % MAX_KEYS;
-            }
         };
-        final AsciiIndexMap map = new AsciiIndexMap(buffer, MAX_KEY_SIZE, MAX_KEYS, asciiHasher);
+        KeyIndexDescriptor indexDescriptor = new KeyIndexDescriptor(MAX_KEY_SIZE, MAX_KEYS);
+        final AsciiIndexMap map = new AsciiIndexMap(buffer, asciiHasher, indexDescriptor);
         String key1 = "ID:10931:Cyclical_Consumer_Goods:SGMS:E:01-19_M:D:2018-01-29";
         int key1Entry = map.addKey(key1);
         MutableAsciiString asciiString = new MutableAsciiString(128);
@@ -110,7 +110,7 @@ public class AsciiMapTest {
         byte[] asciiBytes = new byte[MAX_KEY_SIZE];
         final UnsafeBuffer asciiBuffer = new UnsafeBuffer(asciiBytes);
         AsciiSequenceView asciiSequenceView = new AsciiSequenceView();
-        final AsciiIndexMap map = new AsciiIndexMap(buffer, MAX_KEY_SIZE, 32, new Djb2Hasher(32));
+        final AsciiIndexMap map = new AsciiIndexMap(buffer, new Djb2Hasher(32), new KeyIndexDescriptor(MAX_KEY_SIZE, 32));
         for (int i = 0; i < randSyms.length; i++) {
             String randSym = randSyms[i];
             final int entry = map.addKey(randSym);

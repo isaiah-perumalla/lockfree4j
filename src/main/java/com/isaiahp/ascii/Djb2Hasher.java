@@ -1,30 +1,30 @@
 package com.isaiahp.ascii;
 
+import org.agrona.BitUtil;
+
 /**
  * djb2 has by Daniel Bernstein,
  * work very well for ascii string
  */
 public class Djb2Hasher implements Ascii.Hasher {
 
-    private final int maxKeys;
+    private final int mask;
 
     public Djb2Hasher(int maxKeys) {
-
-        this.maxKeys = maxKeys;
+        if (!BitUtil.isPowerOfTwo(maxKeys)) {
+            throw new IllegalArgumentException("size must be power of two");
+        }
+        this.mask = maxKeys -1;
     }
 
     @Override
     public int hash(CharSequence c) {
-        int h = 5381;
+        long h = 5381L;
         for (int i = 0; i < c.length(); i++) {
             final byte ch = (byte) c.charAt(i);
-            h = ((h << 5) + h) + ch;
+            h = ((h << 5L) + h) + ch;
         }
-        return Math.abs(h);
+        return (int) (h & mask);
     }
 
-    @Override
-    public int index(int h) {
-        return h % maxKeys;
-    }
 }

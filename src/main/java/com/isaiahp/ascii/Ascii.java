@@ -15,7 +15,6 @@ public class Ascii {
     public interface Hasher {
         int hash(CharSequence c);
 
-        int index(int h);
     }
     public static int hash(CharSequence value) {
         assert value != null;

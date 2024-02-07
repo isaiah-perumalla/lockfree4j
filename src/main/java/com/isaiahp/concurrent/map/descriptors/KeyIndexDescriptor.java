@@ -1,5 +1,6 @@
 package com.isaiahp.concurrent.map.descriptors;
 
+import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 
@@ -36,7 +37,9 @@ public class KeyIndexDescriptor {
     private final int maxNumberOfKeys;
 
     public KeyIndexDescriptor(int maxKeySize, int maxNumberOfKeys) {
-
+        if (!BitUtil.isPowerOfTwo(maxNumberOfKeys)) {
+            throw new IllegalArgumentException("max key must be power of two");
+        }
         this.maxKeySize = maxKeySize;
         this.maxNumberOfKeys = maxNumberOfKeys;
     }
@@ -95,5 +98,17 @@ public class KeyIndexDescriptor {
         if (buffer.capacity() < maxKeySize * maxNumberOfKeys) {
             throw new IllegalArgumentException("buffer size too small");
         }
+    }
+
+    public int maxKeys() {
+        return maxNumberOfKeys;
+    }
+
+    public int maxKeySize() {
+        return maxKeySize;
+    }
+
+    public long requiredCapacity() {
+        return BitUtil.align(maxKeySize * maxNumberOfKeys, 8);
     }
 }
