@@ -1,8 +1,8 @@
 package com.isaiahp.ascii;
 
-import org.agrona.AsciiSequenceView;
-
 public class Ascii {
+    public static final Hasher DJB_2_HASH = new Djb2Hash();
+    public static final Hasher DEFAULT_HASH = new DefaultHash();
     public static boolean equals(CharSequence a, CharSequence b) {
         assert a != null && b != null;
         if (a.length() != b.length()) return false;
@@ -13,8 +13,20 @@ public class Ascii {
     }
 
     public interface Hasher {
-        int hash(CharSequence c);
+        long hash(CharSequence c);
 
+    }
+    /**
+     * djb2 has by Daniel Bernstein,
+     * work very well for ascii string
+     */
+    public static long djb2Hash(CharSequence c) {
+        long h = 5381L;
+        for (int i = 0; i < c.length(); i++) {
+            final byte ch = (byte) c.charAt(i);
+            h = ((h << 5L) + h) + ch;
+        }
+        return  h;
     }
     public static int hash(CharSequence value) {
         assert value != null;
@@ -29,5 +41,101 @@ public class Ascii {
             h += intVal;
         }
         return h;
+    }
+
+    public static class Djb2Hash implements Hasher {
+
+        @Override
+        public long hash(CharSequence c) {
+
+            return djb2Hash(c);
+        }
+    }
+    public static class MutableString implements CharSequence {
+
+        private final Hasher hasher;
+        private final int maxSize;
+        private final byte[] chars;
+        private int size;
+        private long hash = 0;
+
+        public MutableString(int maxSize) {
+            this(maxSize, DJB_2_HASH);
+        }
+        public MutableString(int maxSize, Hasher hasher) {
+            this.hasher = hasher;
+            this.maxSize = maxSize;
+            chars = new byte[maxSize];
+        }
+
+        public void set(CharSequence value) {
+            assert value.length() <= maxSize;
+            for (int i = 0; i < value.length(); i++) {
+                chars[i] = (byte) value.charAt(i);
+            }
+            size = value.length();
+            hash = longHash();
+        }
+        @Override
+        public int length() {
+            return size;
+        }
+
+        @Override
+        public char charAt(int index) {
+            assert index < size && index >= 0;
+            return (char) chars[index];
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            throw new UnsupportedOperationException();
+        }
+
+        public byte[] getBuffer() {
+            return chars;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null ) return false;
+
+            if (o instanceof CharSequence) {
+                CharSequence chSequence = (CharSequence) o;
+                return Ascii.equals(this, chSequence);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return (int) longHash();
+        }
+
+        public long longHash() {
+            if (this.hash == 0) {
+                hash = hasher.hash(this);
+            }
+            return  hash;
+        }
+
+        public Hasher getHasher() {
+            return c -> {
+                if (c instanceof MutableString) {
+                    return ((MutableString)c).longHash();
+                }
+                else {
+                    return this.hasher.hash(c);
+                }
+            };
+        }
+    }
+
+    private static class DefaultHash implements Hasher {
+        @Override
+        public long hash(CharSequence c) {
+            return Ascii.hash(c);
+        }
     }
 }

@@ -1,13 +1,11 @@
 package com.isaiahp.map;
 
 import com.isaiahp.ascii.Ascii;
-import com.isaiahp.ascii.Djb2Hasher;
 import com.isaiahp.concurrent.map.AsciiIndexMap;
-import com.isaiahp.concurrent.map.MutableAsciiString;
+import com.isaiahp.concurrent.map.descriptors.CacheFriendlyKeyIndexDescriptor;
 import com.isaiahp.concurrent.map.descriptors.KeyIndexDescriptor;
 import com.isaiahp.shm.MMapFile;
 import org.agrona.AsciiSequenceView;
-import org.agrona.BitUtil;
 import org.agrona.collections.IntHashSet;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.junit.jupiter.api.AfterAll;
@@ -15,10 +13,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
+import java.util.Scanner;
 
 
 public class AsciiMapTest {
@@ -29,12 +30,14 @@ public class AsciiMapTest {
     private static final int MAX_KEYS = 32;
     private static UnsafeBuffer buffer;
     private static MMapFile mmap;
-
+    static KeyIndexDescriptor indexDescriptor;
     @BeforeAll
     public static void setUp() {
-        int length = BitUtil.align(MAX_KEY_SIZE * MAX_KEYS, 8);
+        indexDescriptor = new CacheFriendlyKeyIndexDescriptor(MAX_KEY_SIZE, MAX_KEYS);
+
+        final long length = indexDescriptor.requiredCapacity();
         mmap = MMapFile.create(false, MMAP_PATH, length);
-        buffer = new UnsafeBuffer(mmap.getBufferAddress(), length);
+        buffer = new UnsafeBuffer(mmap.getBufferAddress(), (int) length);
     }
 
     @AfterAll
@@ -54,18 +57,11 @@ public class AsciiMapTest {
     public void testAddRemoveFindEntry() {
 
 
-        Ascii.Hasher asciiHasher = new Ascii.Hasher() {
-            @Override
-            public int hash(CharSequence c) {
-                return MAX_KEYS - 1;
-            }
-
-        };
-        KeyIndexDescriptor indexDescriptor = new KeyIndexDescriptor(MAX_KEY_SIZE, MAX_KEYS);
+        Ascii.Hasher asciiHasher = c -> MAX_KEYS - 1;
         final AsciiIndexMap map = new AsciiIndexMap(buffer, asciiHasher, indexDescriptor);
         String key1 = "ID:10931:Cyclical_Consumer_Goods:SGMS:E:01-19_M:D:2018-01-29";
         int key1Entry = map.addKey(key1);
-        MutableAsciiString asciiString = new MutableAsciiString(128);
+        Ascii.MutableString asciiString = new Ascii.MutableString(128);
         int size = map.readEntry(key1Entry, asciiString.getBuffer(), 0);
         Assertions.assertEquals(key1.length(), size);
         int nextEntry = map.addKey(key1);
@@ -81,6 +77,75 @@ public class AsciiMapTest {
         Assertions.assertTrue(map.removeEntry(key1Entry));
         Assertions.assertEquals(key2Entry, map.getEntry(key2));
         Assertions.assertEquals(key1Entry, map.addKey(key1));
+    }
+
+
+    @Test
+    public void testSampleSet() {
+        int maxKeys = 32768;
+        String findStr = "ID:10682:Non-Cyclical_Consumer_Goods:DWDP:E:05-18_M:D:2018-03-26";
+        CacheFriendlyKeyIndexDescriptor newIndexDescriptor = new CacheFriendlyKeyIndexDescriptor(128, maxKeys);
+        UnsafeBuffer mutableBuffer = new UnsafeBuffer(new byte[(int) newIndexDescriptor.requiredCapacity()]);
+        final AsciiIndexMap map = new AsciiIndexMap(mutableBuffer, Ascii.DJB_2_HASH, newIndexDescriptor);
+
+        String file = "/home/isaiahp/workspace/seqlock4j/src/jmh/resources/symbols.txt";
+        try (
+                Scanner scanner = new Scanner(new File(file))) {
+            int count = 0;
+            while(scanner.hasNext()) {
+                String key = scanner.nextLine();
+                map.addKey(key);
+                if (++count == maxKeys/2) {
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        Ascii.MutableString mutableAscii = createMutableAsciiString("ID:10995:Cyclical_Consumer_Goods:WMT:E:11/09-18_W:D:2018-10-30");
+        Assertions.assertTrue(map.getEntry(findStr) >= 0);
+        Assertions.assertTrue(map.getEntry(mutableAscii) >= 0);
+    }
+
+    @Test
+    public void testAddRemoveFindMutableAsciiEntry() {
+
+        Ascii.Hasher asciiHasher = c -> MAX_KEYS - 1;
+        clearBuffer(buffer);
+        final AsciiIndexMap map = new AsciiIndexMap(buffer, asciiHasher, indexDescriptor);
+        Ascii.MutableString mutableAscii = createMutableAsciiString("ID:10931:Cyclical_Consumer_Goods:SGMS:E:01-19_M:D:2018-01-29");
+        CharSequence key1 = mutableAscii ;
+        int key1Entry = map.addKey(key1);
+        Assertions.assertTrue(key1Entry >= 0);
+        Ascii.MutableString asciiString = new Ascii.MutableString(128);
+        int size = map.readEntry(key1Entry, asciiString.getBuffer(), 0);
+        Assertions.assertEquals(key1.length(), size);
+        int nextEntry = map.addKey(key1);
+        Assertions.assertEquals(~nextEntry, key1Entry);
+        CharSequence key2 = createMutableAsciiString("ID:10725:Financials:ARI:E:08-18_M:D:2018-07-03");
+        int key2Entry = map.getEntry(key2);
+        Assertions.assertEquals((key1Entry + 1) % MAX_KEYS, ~key2Entry);
+        key2Entry = map.addKey(key2);
+        Assertions.assertEquals((key1Entry + 1) % MAX_KEYS, key2Entry);
+        size = map.readEntry(key2Entry, asciiString.getBuffer(), 0);
+        Assertions.assertEquals(key2.length(), size);
+        Assertions.assertEquals(key2.length(), size);
+        Assertions.assertTrue(map.removeEntry(key1Entry));
+        Assertions.assertEquals(key2Entry, map.getEntry(key2));
+        Assertions.assertEquals(key1Entry, map.addKey(key1));
+    }
+
+    private static void clearBuffer(UnsafeBuffer buffer1) {
+        for (int i = 0; i < buffer.capacity(); i++) {
+            buffer1.putByte(i, (byte) 0);
+        }
+    }
+
+    private static Ascii.MutableString createMutableAsciiString(String str) {
+        Ascii.MutableString mutableAscii = new Ascii.MutableString(128);
+        mutableAscii.set(str);
+        return mutableAscii;
     }
 
     @Test
@@ -106,11 +171,12 @@ public class AsciiMapTest {
         ID:10513:Telecommunication:VZ:E:06-19_M:D:2019-06-11
         ID:10861:Telecommunication:CTL:E:03/01-19_W:D:2019-02-12
         ID:10631:Healthcare:JNJ:E:05-19_M:D:2019-05-07""".split("\n");
-
+        clearBuffer(buffer);
         byte[] asciiBytes = new byte[MAX_KEY_SIZE];
         final UnsafeBuffer asciiBuffer = new UnsafeBuffer(asciiBytes);
         AsciiSequenceView asciiSequenceView = new AsciiSequenceView();
-        final AsciiIndexMap map = new AsciiIndexMap(buffer, new Djb2Hasher(32), new KeyIndexDescriptor(MAX_KEY_SIZE, 32));
+//        KeyIndexDescriptor keyIndexDescriptor1 = new DefaultKeyIndexDescriptor(MAX_KEY_SIZE, 32);
+        final AsciiIndexMap map = new AsciiIndexMap(buffer, Ascii::djb2Hash, indexDescriptor);
         for (int i = 0; i < randSyms.length; i++) {
             String randSym = randSyms[i];
             final int entry = map.addKey(randSym);
