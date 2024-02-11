@@ -35,7 +35,7 @@ public class AsciiMapBench {
     private Object2IntHashMap<CharSequence> agronaMap;
     private Ascii.MutableString mutableAsciiString = new Ascii.MutableString(128);
     @Param(value = {
-            "0.5",
+//            "0.5",
             "0.75",
                "0.9"})
     private float loadFactor;
@@ -55,9 +55,9 @@ public class AsciiMapBench {
         KeyIndexDescriptor cacheFriendly = new CacheFriendlyKeyIndexDescriptor(128, maxKeys);
         int capacity = (int) indexDescriptor.requiredCapacity();
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[capacity]);
-        asciiIndexBaseLineMap = new AsciiIndexMap(buffer, Ascii.DJB_2_HASH, indexDescriptor);
+        asciiIndexBaseLineMap = new AsciiIndexMap(buffer, Ascii.MutableString::hash, indexDescriptor);
         UnsafeBuffer buffer2 = new UnsafeBuffer(new byte[(int) cacheFriendly.requiredCapacity()]);;
-        asciiIndexHashCodeMap = new AsciiIndexMap(buffer2, Ascii.DJB_2_HASH, cacheFriendly);
+        asciiIndexHashCodeMap = new AsciiIndexMap(buffer2, Ascii.MutableString::hash, cacheFriendly);
         stdHashSet = new HashMap<>();
         agronaMap = new Object2IntHashMap<>( -1);
         String file = "/home/isaiahp/workspace/seqlock4j/src/jmh/resources/symbols.txt";

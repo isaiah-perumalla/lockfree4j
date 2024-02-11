@@ -32,8 +32,8 @@ import org.agrona.concurrent.UnsafeBuffer;
  */
 public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
     public static final byte NULL_CHAR =  '\0';
-    private static final byte DELETED_CHAR = '\1';
-    private static final long DELETED_HASH = 1;
+    private static final long DELETED_HASH = 1L << 63; //length is -ve high 16 bits
+    public static final int NULL_HASH = 0;
     private final int maxKeySize;
     private final int maxNumberOfKeys;
     private final int hashCodesStartOffset;
@@ -57,7 +57,7 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
 
     @Override
     public boolean isEmptySlot(int i, DirectBuffer buffer) {
-        return 0 == getHashCodeAt(i, buffer);
+        return NULL_HASH == getHashCodeAt(i, buffer);
     }
 
     @Override
@@ -79,19 +79,39 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
 
     private void setHashcode(int index, UnsafeBuffer buffer, long hashcode, int length) {
         final int hashCodeOffset = getHashCodeOffset(index);
-        buffer.putLong(hashCodeOffset, hashcode);
+        long newHash = computeHash(hashcode, length);
+        buffer.putLong(hashCodeOffset, newHash);
     }
 
+    /**
+     * encode length in the 64 bit hashcode
+     * high 16 bits is length of string
+     * @param hashcode
+     * @param length
+     * @return
+     */
+    private static long computeHash(long hashcode, int length) {
+        assert length < Short.MAX_VALUE : "key length cannot exceed Short.MAX_VALUE";
+        long newHash = hashcode & 0X0000FFFFFFFFFFFFL;
+        long size = length;
+        newHash = newHash | (size << 48L);
+        assert size == (newHash >> 48) : "size not encoded in hash";
+        return newHash;
+    }
+
+    private static short decodeKeyLength(long hashCode) {
+        return (short)(hashCode >> 48);
+    }
     private int getHashCodeOffset(int index) {
         return hashCodesStartOffset + (Long.BYTES * index);
     }
 
     @Override
     public boolean valueEquals(int entryIndex, CharSequence key, long hash, DirectBuffer buffer) {
-        //1 ch for null terminator
-        if (key.length()-1 > maxKeySize) return false;
+        final long internalHash = computeHash(hash, key.length());
+        if (key.length() > maxKeySize) return false;
         final long candidateHashCode = getHashCodeAt(entryIndex, buffer);
-        if (candidateHashCode != hash) return false;
+        if (candidateHashCode != internalHash) return false; //implies same key length
 
         final int offset = getKeyOffsetForIndex(entryIndex);
         for (int j = 0; j < key.length(); j++) {
@@ -111,11 +131,10 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
 
     @Override
     public boolean markDeleted(int entry, UnsafeBuffer buffer) {
-        final int offset = getKeyOffsetForIndex(entry);
-        byte b = buffer.getByte(offset);
-        if (b == NULL_CHAR || b == DELETED_CHAR) return false;
-        buffer.putByte(offset, DELETED_CHAR);
-        setHashcode(entry, buffer, DELETED_HASH, 0);
+        assert entry >= 0 && entry < maxNumberOfKeys;
+        final int hashCodeOffset = getHashCodeOffset(entry);
+        buffer.putLong(hashCodeOffset, DELETED_HASH);
+        assert decodeKeyLength(DELETED_HASH) < 0;
         return true;
     }
 
@@ -151,14 +170,14 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
 
     @Override
     public int copyBytes(int entryIndex, DirectBuffer src, byte[] dst, int dstOffset) {
+        final long hashCode = getHashCodeAt(entryIndex, src);
+        final short keyLength = decodeKeyLength(hashCode);
+        assert keyLength >= 0 && keyLength <= maxKeySize : "invalid key length";
         final int srcOffset = getKeyOffsetForIndex(entryIndex);
-        for (int i = 0; i < maxKeySize; i++) {
+        for (int i = 0; i < keyLength; i++) {
             final byte b = src.getByte(srcOffset + i);
-            if (b == '\0') {
-                return i;
-            }
             dst[dstOffset + i] = b;
         }
-        return maxKeySize;
+        return keyLength;
     }
 }

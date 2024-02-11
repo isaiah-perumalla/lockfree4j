@@ -53,19 +53,23 @@ public class Ascii {
     }
     public static class MutableString implements CharSequence {
 
-        private final Hasher hasher;
+        private static final Hasher hasher = DEFAULT_HASH;
+        public static long hash(CharSequence ch) {
+            if (ch == null) return 0;
+            if (ch instanceof MutableString) {
+                MutableString mutable = (MutableString) ch;
+                return mutable.longHash();
+            }
+            return hasher.hash(ch);
+        }
         private final int maxSize;
         private final byte[] chars;
         private int size;
         private long hash = 0;
 
         public MutableString(int maxSize) {
-            this(maxSize, DJB_2_HASH);
-        }
-        public MutableString(int maxSize, Hasher hasher) {
-            this.hasher = hasher;
             this.maxSize = maxSize;
-            chars = new byte[maxSize];
+            this.chars = new byte[maxSize];
         }
 
         public void set(CharSequence value) {
@@ -120,16 +124,7 @@ public class Ascii {
             return  hash;
         }
 
-        public Hasher getHasher() {
-            return c -> {
-                if (c instanceof MutableString) {
-                    return ((MutableString)c).longHash();
-                }
-                else {
-                    return this.hasher.hash(c);
-                }
-            };
-        }
+
     }
 
     private static class DefaultHash implements Hasher {

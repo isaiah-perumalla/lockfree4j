@@ -1,7 +1,6 @@
 package com.isaiahp.concurrent.map;
 
 import com.isaiahp.ascii.Ascii;
-import com.isaiahp.concurrent.map.descriptors.DefaultKeyIndexDescriptor;
 import com.isaiahp.concurrent.map.descriptors.KeyIndexDescriptor;
 import org.agrona.concurrent.UnsafeBuffer;
 

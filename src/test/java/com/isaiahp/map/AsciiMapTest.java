@@ -86,7 +86,7 @@ public class AsciiMapTest {
         String findStr = "ID:10682:Non-Cyclical_Consumer_Goods:DWDP:E:05-18_M:D:2018-03-26";
         CacheFriendlyKeyIndexDescriptor newIndexDescriptor = new CacheFriendlyKeyIndexDescriptor(128, maxKeys);
         UnsafeBuffer mutableBuffer = new UnsafeBuffer(new byte[(int) newIndexDescriptor.requiredCapacity()]);
-        final AsciiIndexMap map = new AsciiIndexMap(mutableBuffer, Ascii.DJB_2_HASH, newIndexDescriptor);
+        final AsciiIndexMap map = new AsciiIndexMap(mutableBuffer, Ascii.MutableString::hash, newIndexDescriptor);
 
         String file = "/home/isaiahp/workspace/seqlock4j/src/jmh/resources/symbols.txt";
         try (
