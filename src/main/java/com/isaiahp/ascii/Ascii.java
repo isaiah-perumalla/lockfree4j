@@ -53,7 +53,7 @@ public class Ascii {
     }
     public static class MutableString implements CharSequence {
 
-        private static final Hasher hasher = DEFAULT_HASH;
+        private static final Hasher hasher = DJB_2_HASH;
         public static long hash(CharSequence ch) {
             if (ch == null) return 0;
             if (ch instanceof MutableString) {

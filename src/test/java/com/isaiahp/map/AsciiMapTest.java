@@ -6,6 +6,7 @@ import com.isaiahp.concurrent.map.descriptors.CacheFriendlyKeyIndexDescriptor;
 import com.isaiahp.concurrent.map.descriptors.KeyIndexDescriptor;
 import com.isaiahp.shm.MMapFile;
 import org.agrona.AsciiSequenceView;
+import org.agrona.LangUtil;
 import org.agrona.collections.IntHashSet;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.junit.jupiter.api.AfterAll;
@@ -13,9 +14,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
@@ -83,29 +83,51 @@ public class AsciiMapTest {
     @Test
     public void testSampleSet() {
         int maxKeys = 32768;
+        float loadFactor = 0.75f;
         String findStr = "ID:10682:Non-Cyclical_Consumer_Goods:DWDP:E:05-18_M:D:2018-03-26";
         CacheFriendlyKeyIndexDescriptor newIndexDescriptor = new CacheFriendlyKeyIndexDescriptor(128, maxKeys);
         UnsafeBuffer mutableBuffer = new UnsafeBuffer(new byte[(int) newIndexDescriptor.requiredCapacity()]);
         final AsciiIndexMap map = new AsciiIndexMap(mutableBuffer, Ascii.MutableString::hash, newIndexDescriptor);
 
-        String file = "/home/isaiahp/workspace/seqlock4j/src/jmh/resources/symbols.txt";
-        try (
-                Scanner scanner = new Scanner(new File(file))) {
-            int count = 0;
-            while(scanner.hasNext()) {
-                String key = scanner.nextLine();
-                map.addKey(key);
-                if (++count == maxKeys/2) {
-                    break;
-                }
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        final int limit = (int) (maxKeys * loadFactor);
+        final int symCount = loadSymbols(map, limit, "symbols.txt");
 
         Ascii.MutableString mutableAscii = createMutableAsciiString("ID:10995:Cyclical_Consumer_Goods:WMT:E:11/09-18_W:D:2018-10-30");
         Assertions.assertTrue(map.getEntry(findStr) >= 0);
         Assertions.assertTrue(map.getEntry(mutableAscii) >= 0);
+    }
+
+    private static InputStream getInputStream(String file) {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classloader.getResourceAsStream(file);
+        if (is == null) {
+            throw new IllegalArgumentException("symbol file not found ");
+        }
+        return is;
+    }
+    private static int loadSymbols(AsciiIndexMap map, int limit, String file) {
+        int count = 0;
+        final InputStream inputStream = getInputStream(file);
+        try (Scanner scanner = new Scanner(inputStream)) {
+            while(scanner.hasNext()) {
+                String key = scanner.nextLine();
+                map.addKey(key);
+                if (++count == limit) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            LangUtil.rethrowUnchecked(e);
+        }
+        finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                LangUtil.rethrowUnchecked(e);
+            }
+        }
+
+        return count;
     }
 
     @Test
