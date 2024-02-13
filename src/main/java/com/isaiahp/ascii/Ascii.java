@@ -1,5 +1,8 @@
 package com.isaiahp.ascii;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 public class Ascii {
     public static final Hasher DJB_2_HASH = new Djb2Hash();
     public static final Hasher DEFAULT_HASH = new DefaultHash();
@@ -10,6 +13,23 @@ public class Ascii {
             if (a.charAt(i) != b.charAt(i)) return false;
         }
         return true;
+    }
+
+    public static boolean decodePrefix(long encoded, MutableString mutableString) {
+        final long mask = 0x7F;
+        mutableString.size = 0;
+        int i = 0;
+        for (; i < 9; i++) {
+            final byte ch = (byte) ((encoded >> (i * 7)) & mask);
+            if (ch != 0) {
+                mutableString.chars[i] = ch;
+            }
+            else {
+                break;
+            }
+        }
+        mutableString.size = i;
+        return encoded >= 0; // top bit is set if this prefix is not the entire string
     }
 
     public interface Hasher {
@@ -51,9 +71,25 @@ public class Ascii {
             return djb2Hash(c);
         }
     }
+
+    public static long encodePrefix(CharSequence cs) {
+        long encoded = 0;
+        final byte mask = 0x7F; //0111 1111
+        int size = Math.min(9, cs.length());
+        for (int i = 0; i < size; i++) {
+            final byte b = (byte) cs.charAt(i);
+            final long asciiByte =  (b & mask);
+            encoded = encoded | (asciiByte << i * 7);
+        }
+        if (cs.length() > 9) {
+            //set continuation bit
+            encoded = encoded | (1L << 63 );
+        }
+        return encoded;
+    }
     public static class MutableString implements CharSequence {
 
-        private static final Hasher hasher = DJB_2_HASH;
+        private static final Hasher hasher = Ascii::hash;
         public static long hash(CharSequence ch) {
             if (ch == null) return 0;
             if (ch instanceof MutableString) {
@@ -112,6 +148,10 @@ public class Ascii {
             return false;
         }
 
+        @Override
+        public String toString() {
+            return new String(this.chars, 0, size, StandardCharsets.US_ASCII);
+        }
         @Override
         public int hashCode() {
             return (int) longHash();

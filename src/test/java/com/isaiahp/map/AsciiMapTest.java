@@ -8,6 +8,8 @@ import com.isaiahp.shm.MMapFile;
 import org.agrona.AsciiSequenceView;
 import org.agrona.LangUtil;
 import org.agrona.collections.IntHashSet;
+import org.agrona.collections.Object2IntHashMap;
+import org.agrona.collections.ObjectHashSet;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -18,8 +20,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 
 public class AsciiMapTest {
@@ -81,6 +86,26 @@ public class AsciiMapTest {
 
 
     @Test
+    public void testShortStringsSample() {
+        HashSet<String> shortSyms = new HashSet<>();
+        int count = loadSymbols(1024, "short_syms.txt", s -> shortSyms.add(s));
+        CacheFriendlyKeyIndexDescriptor newIndexDescriptor = new CacheFriendlyKeyIndexDescriptor(8, 1024);
+        UnsafeBuffer mutableBuffer = new UnsafeBuffer(new byte[(int) newIndexDescriptor.requiredCapacity()]);
+        final AsciiIndexMap map = new AsciiIndexMap(mutableBuffer, Ascii.MutableString::hash, newIndexDescriptor);
+        int MISSING_VALUE = -1;
+        final Object2IntHashMap<String> symbolToEntry = new Object2IntHashMap<>(MISSING_VALUE);
+        for (String s: shortSyms) {
+            final int entry = map.addKey(s);
+            Assertions.assertTrue(entry >=0 && entry <= 1024);
+            Assertions.assertEquals(MISSING_VALUE, symbolToEntry.put(s, entry), "ERROR: entry already exists");
+        }
+        for (String s: shortSyms) {
+            final int entry = map.getEntry(s);
+            Assertions.assertTrue(entry >=0 && entry <= 1024);
+            Assertions.assertEquals(entry, symbolToEntry.getValue(s), "incorrect entry for key");
+        }
+    }
+    @Test
     public void testSampleSet() {
         int maxKeys = 32768;
         float loadFactor = 0.75f;
@@ -90,7 +115,7 @@ public class AsciiMapTest {
         final AsciiIndexMap map = new AsciiIndexMap(mutableBuffer, Ascii.MutableString::hash, newIndexDescriptor);
 
         final int limit = (int) (maxKeys * loadFactor);
-        final int symCount = loadSymbols(map, limit, "symbols.txt");
+        final int symCount = loadSymbols(limit, "symbols.txt", s -> map.addKey(s));
 
         Ascii.MutableString mutableAscii = createMutableAsciiString("ID:10995:Cyclical_Consumer_Goods:WMT:E:11/09-18_W:D:2018-10-30");
         Assertions.assertTrue(map.getEntry(findStr) >= 0);
@@ -105,13 +130,13 @@ public class AsciiMapTest {
         }
         return is;
     }
-    private static int loadSymbols(AsciiIndexMap map, int limit, String file) {
+    private static int loadSymbols(int limit, String file, Consumer<String> stringConsumer) {
         int count = 0;
         final InputStream inputStream = getInputStream(file);
         try (Scanner scanner = new Scanner(inputStream)) {
             while(scanner.hasNext()) {
                 String key = scanner.nextLine();
-                map.addKey(key);
+                stringConsumer.accept(key);
                 if (++count == limit) {
                     break;
                 }

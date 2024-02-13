@@ -37,6 +37,7 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
     private final int maxKeySize;
     private final int maxNumberOfKeys;
     private final int hashCodesStartOffset;
+    private final int prefixStartOffset;
     private final int keyDataStartOffset;
 
     public CacheFriendlyKeyIndexDescriptor(int maxKeySize, int maxNumberOfKeys) {
@@ -46,7 +47,8 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
         this.maxKeySize = maxKeySize;
         this.maxNumberOfKeys = maxNumberOfKeys;
         this.hashCodesStartOffset = 0;
-        this.keyDataStartOffset = hashCodesSlotSize(maxNumberOfKeys);
+        this.prefixStartOffset = hashCodesSlotSize(maxNumberOfKeys);
+        this.keyDataStartOffset = prefixStartOffset + prefixSlotSize(maxNumberOfKeys);
     }
 
     private int getKeyOffsetForIndex(int index) {
@@ -159,11 +161,18 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
     @Override
     public long requiredCapacity() {
         final int hashCodeSlotsSize = hashCodesSlotSize(maxNumberOfKeys);
+        final int prefixSlotsSize = prefixSlotSize(maxNumberOfKeys);
         final int totalKeyDataSize = BitUtil.align(maxKeySize * maxNumberOfKeys, 8);
-        return BitUtil.align(hashCodeSlotsSize + totalKeyDataSize, 8);
+        return BitUtil.align(hashCodeSlotsSize + prefixSlotsSize + totalKeyDataSize, 8);
     }
 
     private static int hashCodesSlotSize(int maxNumberOfKeys) {
+        final int hashCodeSlotsSize = BitUtil.align(Long.BYTES * maxNumberOfKeys, 8);
+        return hashCodeSlotsSize;
+    }
+
+    private static int prefixSlotSize(int maxNumberOfKeys) {
+        //9 char ascii encoded in 63 bit
         final int hashCodeSlotsSize = BitUtil.align(Long.BYTES * maxNumberOfKeys, 8);
         return hashCodeSlotsSize;
     }

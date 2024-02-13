@@ -56,6 +56,7 @@ public class AsciiMapBench {
         this.notFound = notFoundMutableStr;
         if (shortString) {
             mutableAsciiString.set("EURUSD");
+            notFoundMutableStr.set("NOT_HERE");
         }
         else {
             mutableAsciiString.set(findStrs[0]);
