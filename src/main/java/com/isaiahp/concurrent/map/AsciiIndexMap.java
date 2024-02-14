@@ -56,19 +56,13 @@ public class AsciiIndexMap {
     public int getEntry(CharSequence key) {
         final long hashcode = getHashcode(key);
         assert hashcode != 0 && hashcode != 1 : "invalid hash code";
-        final int hashIndex = (int) (hashcode & mask);
-        for (int i = 0; i < keyIndexDescriptor.maxKeys(); i++) {
-            final int index = (hashIndex + i) & mask;
-            if(keyIndexDescriptor.isEmptySlot(index, buffer)) {
-                return ~index;
-            }
-            if (keyIndexDescriptor.valueEquals(index, key, hashcode, buffer)) {
-                return index; //match
-            }
-        }
-        assert false : "all slots full";
-        return ~keyIndexDescriptor.maxKeys();// notify all items scanned
+
+        final int index = keyIndexDescriptor.findKeyEntry(key, hashcode, buffer);
+        return index;
+
     }
+
+
 
     public boolean removeEntry(int entry) {
         assert entry >= 0 && entry < keyIndexDescriptor.maxKeySize();

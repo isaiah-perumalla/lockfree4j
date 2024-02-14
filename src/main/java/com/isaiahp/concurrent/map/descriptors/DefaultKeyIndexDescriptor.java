@@ -65,6 +65,23 @@ public class DefaultKeyIndexDescriptor implements KeyIndexDescriptor {
     }
 
     @Override
+    public int findKeyEntry(CharSequence key, long hashcode, DirectBuffer buffer) {
+        final int mask = maxKeys() -1;
+        final int hashIndex = (int) (hashcode & mask);
+        for (int i = 0; i < mask; i++) {
+            final int index = (hashIndex + i) & mask;
+            if(isEmptySlot(index, buffer)) {
+                return ~index;
+            }
+            if (valueEquals(index, key, hashcode, buffer)) {
+                return index;
+            }
+        }
+        assert false : "all slots full";
+        return ~maxKeys();// notify all items scanned
+    }
+
+    @Override
     public void setCharSequenceAt(int index, UnsafeBuffer buffer, long hashcode, CharSequence value) {
         assert value.length() + 1 <= maxKeySize;
         final int offset = getKeyOffsetForIndex(index);

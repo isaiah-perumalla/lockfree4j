@@ -17,15 +17,13 @@ public class Ascii {
 
     public static boolean decodePrefix(long encoded, MutableString mutableString) {
         final long mask = 0x7F;
-        mutableString.size = 0;
         int i = 0;
         for (; i < 9; i++) {
             final byte ch = (byte) ((encoded >> (i * 7)) & mask);
-            if (ch != 0) {
-                mutableString.chars[i] = ch;
-            }
-            else {
+            if (ch == 0) {
                 break;
+            } else {
+                mutableString.chars[i] = ch;
             }
         }
         mutableString.size = i;

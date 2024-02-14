@@ -24,4 +24,6 @@ public interface KeyIndexDescriptor {
     long requiredCapacity();
 
     int copyBytes(int entry, DirectBuffer buffer, byte[] dst, int dstOffset);
+
+    int findKeyEntry(CharSequence key, long hashcode, DirectBuffer buffer);
 }

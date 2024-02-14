@@ -1,0 +1,69 @@
+Benchmark                                             (loadFactor)  (shortString)  Mode  Cnt    Score    Error      Units
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap                0.75           true  avgt    5   97.465 ± 10.507      ns/op
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·cpi           0.75           true  avgt         0.297           clks/insn
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·ipc           0.75           true  avgt         3.369           insns/clk
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf          0.75           true  avgt           NaN                 ---
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap                0.75          false  avgt    5  121.581 ±  4.356      ns/op
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·cpi           0.75          false  avgt         0.274           clks/insn
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·ipc           0.75          false  avgt         3.648           insns/clk
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf          0.75          false  avgt           NaN                 ---
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap                 0.9           true  avgt    5  189.613 ± 22.060      ns/op
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·cpi            0.9           true  avgt         0.319           clks/insn
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·ipc            0.9           true  avgt         3.132           insns/clk
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf           0.9           true  avgt           NaN                 ---
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap                 0.9          false  avgt    5  204.215 ± 37.584      ns/op
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·cpi            0.9          false  avgt         0.288           clks/insn
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·ipc            0.9          false  avgt         3.470           insns/clk
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf           0.9          false  avgt           NaN                 ---
+
+
+# Parameters: (loadFactor = 0.9, shortString = true)
+
+# Run progress: 50.00% complete, ETA 00:01:42
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 180.123 ns/op
+# Warmup Iteration   2: 178.128 ns/op
+# Warmup Iteration   3: 179.396 ns/op
+# Warmup Iteration   4: 183.937 ns/op
+# Warmup Iteration   5: 181.977 ns/op
+Iteration   1: 183.658 ns/op
+Iteration   2: 189.539 ns/op
+Iteration   3: 188.766 ns/op
+Iteration   4: 199.028 ns/op
+Iteration   5: 187.073 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap":
+  189.613 ±(99.9%) 22.060 ns/op [Average]
+  (min, avg, max) = (183.658, 189.613, 199.028), stdev = 5.729
+  CI (99.9%): [167.553, 211.673] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         25,322.28 msec task-clock                       #    1.001 CPUs utilized
+             1,318      context-switches                 #   52.049 /sec
+               135      cpu-migrations                   #    5.331 /sec
+               180      page-faults                      #    7.108 /sec
+    73,920,828,680      cycles                           #    2.919 GHz                         (28.60%)
+    10,521,327,763      stalled-cycles-frontend          #   14.23% frontend cycles idle        (28.69%)
+   231,546,721,474      instructions                     #    3.13  insn per cycle
+                                                  #    0.05  stalled cycles per insn     (35.85%)
+    45,591,994,045      branches                         #    1.800 G/sec                       (35.88%)
+       131,908,636      branch-misses                    #    0.29% of all branches             (35.93%)
+    80,605,131,686      L1-dcache-loads                  #    3.183 G/sec                       (25.75%)
+         3,752,559      L1-dcache-load-misses            #    0.00% of all L1-dcache accesses   (15.72%)
+         2,764,622      LLC-loads                        #  109.177 K/sec                       (14.31%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         7,077,895      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (21.45%)
+    80,721,309,416      dTLB-loads                       #    3.188 G/sec                       (21.39%)
+           626,807      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (14.31%)
+           134,744      iTLB-loads                       #    5.321 K/sec                       (14.29%)
+           130,350      iTLB-load-misses                 #   96.74% of all iTLB cache accesses  (21.42%)
+   <not supported>      L1-dcache-prefetches
+           928,071      L1-dcache-prefetch-misses        #   36.650 K/sec                       (28.54%)

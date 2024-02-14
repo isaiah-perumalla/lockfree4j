@@ -1,5 +1,6 @@
 package com.isaiahp.concurrent.map.descriptors;
 
+import com.isaiahp.ascii.Ascii;
 import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
@@ -32,8 +33,10 @@ import org.agrona.concurrent.UnsafeBuffer;
  */
 public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
     public static final byte NULL_CHAR =  '\0';
-    private static final long DELETED_HASH = 1L << 63; //length is -ve high 16 bits
+    private static final long DELETED_HASH = 0x3L << 62; //length is -ve high 16 bits
     public static final int NULL_HASH = 0;
+    private static final long DELETED_PREFIX = 0X0FFFFFFFFFFFFF00L;
+    private static final long NULL_PREFIX = 0L;
     private final int maxKeySize;
     private final int maxNumberOfKeys;
     private final int hashCodesStartOffset;
@@ -71,12 +74,24 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
     public void setCharSequenceAt(int index, UnsafeBuffer buffer, long hashcode, CharSequence value) {
         assert value.length() + 1 <= maxKeySize;
         final int offset = getKeyOffsetForIndex(index);
+        final long encodedPrefix = Ascii.encodePrefix(value);
         for (int i = 0; i < value.length(); i++) {
             final byte asciiByte = (byte) value.charAt(i);
             buffer.putByte(offset + i, asciiByte);
         }
         buffer.putByte(offset + value.length(), NULL_CHAR);
+        setPrefix(index, buffer, encodedPrefix);
         setHashcode(index, buffer, hashcode, value.length());
+    }
+
+    private void setPrefix(int index, UnsafeBuffer buffer, long encodedPrefix) {
+        final int prefixOffset = getPrefixOffset(index);
+        buffer.putLong(prefixOffset, encodedPrefix);
+
+    }
+
+    private int getPrefixOffset(int index) {
+        return prefixStartOffset + (Long.BYTES * index);
     }
 
     private void setHashcode(int index, UnsafeBuffer buffer, long hashcode, int length) {
@@ -94,15 +109,17 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
      */
     private static long computeHash(long hashcode, int length) {
         assert length < Short.MAX_VALUE : "key length cannot exceed Short.MAX_VALUE";
-        long newHash = hashcode & 0X0000FFFFFFFFFFFFL;
+        
+        long newHash = hashcode & 0X00007FFFFFFFFFFFL; //mask high 17 bits
         long size = length;
-        newHash = newHash | (size << 48L);
-        assert size == (newHash >> 48) : "size not encoded in hash";
+        newHash = newHash | (size << 47L);
+        newHash = newHash | (1L << 63); // set high bit to indicate long string
+        assert size == decodeKeyLength(newHash) : "size not encoded in hash";
         return newHash;
     }
 
     private static short decodeKeyLength(long hashCode) {
-        return (short)(hashCode >> 48);
+        return (short)((hashCode >> 47) & 0xFFFF);
     }
     private int getHashCodeOffset(int index) {
         return hashCodesStartOffset + (Long.BYTES * index);
@@ -135,7 +152,9 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
     public boolean markDeleted(int entry, UnsafeBuffer buffer) {
         assert entry >= 0 && entry < maxNumberOfKeys;
         final int hashCodeOffset = getHashCodeOffset(entry);
+        final int prefixOffset = getPrefixOffset(entry);
         buffer.putLong(hashCodeOffset, DELETED_HASH);
+        buffer.putLong(prefixOffset, DELETED_PREFIX);
         assert decodeKeyLength(DELETED_HASH) < 0;
         return true;
     }
@@ -189,4 +208,48 @@ public class CacheFriendlyKeyIndexDescriptor implements KeyIndexDescriptor {
         }
         return keyLength;
     }
+
+    @Override
+    public int findKeyEntry(CharSequence key, long hashcode, DirectBuffer buffer) {
+//        if (key.length() < 10) {
+//            return findShortKeyEntry(key, hashcode, buffer);
+//        }
+
+        final int mask = maxKeys() -1;
+        final int hashIndex = (int) (hashcode & mask);
+
+        for (int i = 0; i < mask; i++) {
+            final int index = (hashIndex + i) & mask;
+            if(isEmptySlot(index, buffer)) {
+                return ~index;
+            }
+            if (valueEquals(index, key, hashcode, buffer)) {
+                return index;
+            }
+        }
+        assert false : "all slots full";
+        return ~maxKeys();// notify all items scanned
+    }
+
+    private int findShortKeyEntry(CharSequence key, long hashcode, DirectBuffer buffer) {
+        assert key.length() <= 9 : "can only use if key length is less 10 chars";
+        int maxKeys = maxKeys();
+        final long prefix = Ascii.encodePrefix(key);
+        final int mask = maxKeys -1;
+        final int hashIndex = (int) (hashcode & mask);
+        for (int i = 0; i < maxKeys; i++) {
+            final int index = (hashIndex + i) & mask;
+            final int prefixOffset = getPrefixOffset(index);
+            final long candidatePrefix = buffer.getLong(prefixOffset);
+            if (candidatePrefix == prefix) {
+                return index;
+            }
+            if (candidatePrefix == NULL_PREFIX) {
+                return ~index;
+            }
+        }
+        assert false : "all slots full";
+        return ~maxKeys;
+    }
+
 }
