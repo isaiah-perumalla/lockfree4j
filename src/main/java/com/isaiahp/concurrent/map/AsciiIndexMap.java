@@ -1,26 +1,24 @@
 package com.isaiahp.concurrent.map;
 
-import com.isaiahp.ascii.Ascii;
+import com.isaiahp.ascii.MutableAsciiSequence;
 import com.isaiahp.concurrent.map.descriptors.KeyIndexDescriptor;
 import org.agrona.concurrent.UnsafeBuffer;
 
 public class AsciiIndexMap {
     private final UnsafeBuffer buffer;
-    private final Ascii.Hasher hasher;
     private final  int mask;
     private final KeyIndexDescriptor keyIndexDescriptor;
 
-    public AsciiIndexMap(UnsafeBuffer buffer, Ascii.Hasher asciiHasher, KeyIndexDescriptor keyIndexDescriptor1) {
+    public AsciiIndexMap(UnsafeBuffer buffer, KeyIndexDescriptor keyIndexDescriptor1) {
         this.keyIndexDescriptor = keyIndexDescriptor1;
         this.keyIndexDescriptor.checkCapacity(buffer);
-        this.hasher = asciiHasher;
         this.buffer = buffer;
         this.mask = keyIndexDescriptor.maxKeys() -1;
     }
 
     public int addKey(CharSequence key) {
-        final long hashcode = getHashcode(key);
-        assert hashcode != 0 && hashcode != 1 : "invalid hash code";
+        final long hashcode = keyIndexDescriptor.getHashcode(key);
+        assert hashcode != 0  : "invalid hash code";
         final int hashIndex = (int) (hashcode & mask);
 
         for (int i = 0; i < keyIndexDescriptor.maxKeys(); i++) {
@@ -38,26 +36,21 @@ public class AsciiIndexMap {
         return ~keyIndexDescriptor.maxKeys(); // notify full
     }
 
-    private long getHashcode(CharSequence key) {
-        final long hashcode = this.hasher.hash(key);
-        return hashcode;
-    }
 
 
-    public int readEntry(int entry, byte[] dst, int dstOffset) {
+    public int readEntry(int entry, MutableAsciiSequence dst) {
         if (entry < 0 || entry > keyIndexDescriptor.maxKeys()) {
             throw new IllegalArgumentException("invalid entry");
         };
-        return keyIndexDescriptor.copyBytes(entry, buffer, dst, dstOffset);
+        return keyIndexDescriptor.copyBytes(entry, buffer, dst);
     }
+
 
 
 
     public int getEntry(CharSequence key) {
-        final long hashcode = getHashcode(key);
-        assert hashcode != 0 && hashcode != 1 : "invalid hash code";
 
-        final int index = keyIndexDescriptor.findKeyEntry(key, hashcode, buffer);
+        final int index = keyIndexDescriptor.findKeyEntry(key, buffer);
         return index;
 
     }

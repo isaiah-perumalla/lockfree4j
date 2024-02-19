@@ -62,13 +62,14 @@ public class AsciiMapBench {
             mutableAsciiString.set(findStrs[0]);
         }
         findKey = mutableAsciiString;
-        DefaultKeyIndexDescriptor indexDescriptor = new DefaultKeyIndexDescriptor(128, maxKeys);
-        KeyIndexDescriptor cacheFriendly = new CacheFriendlyKeyIndexDescriptor(128, maxKeys);
-        int capacity = (int) indexDescriptor.requiredCapacity();
+        DefaultKeyIndexDescriptor indexDescriptor = new DefaultKeyIndexDescriptor(128, maxKeys, Ascii.MutableString::hash);
+        KeyIndexDescriptor cacheFriendly = new CacheFriendlyKeyIndexDescriptor(128, maxKeys, Ascii.MutableString::hash);
+        int capacity = (int) DefaultKeyIndexDescriptor.computeRequiredCapacity(128, maxKeys);
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[capacity]);
-        asciiIndexBaseLineMap = new AsciiIndexMap(buffer, Ascii.MutableString::hash, indexDescriptor);
-        UnsafeBuffer buffer2 = new UnsafeBuffer(new byte[(int) cacheFriendly.requiredCapacity()]);;
-        asciiIndexHashCodeMap = new AsciiIndexMap(buffer2, Ascii.MutableString::hash, cacheFriendly);
+
+        asciiIndexBaseLineMap = new AsciiIndexMap(buffer, indexDescriptor);
+        UnsafeBuffer buffer2 = new UnsafeBuffer(new byte[(int) CacheFriendlyKeyIndexDescriptor.computeRequiredCapacity(128, maxKeys)]);;
+        asciiIndexHashCodeMap = new AsciiIndexMap(buffer2, cacheFriendly);
         stdHashSet = new HashMap<>();
         agronaMap = new Object2IntHashMap<>( -1);
         String file = "/home/isaiahp/workspace/seqlock4j/src/jmh/resources/symbols.txt";

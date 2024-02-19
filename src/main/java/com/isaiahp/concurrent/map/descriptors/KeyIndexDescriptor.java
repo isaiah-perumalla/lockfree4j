@@ -1,5 +1,6 @@
 package com.isaiahp.concurrent.map.descriptors;
 
+import com.isaiahp.ascii.MutableAsciiSequence;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 
@@ -21,9 +22,10 @@ public interface KeyIndexDescriptor {
 
     int maxKeySize();
 
-    long requiredCapacity();
 
-    int copyBytes(int entry, DirectBuffer buffer, byte[] dst, int dstOffset);
+    int copyBytes(int entry, DirectBuffer buffer, MutableAsciiSequence dst);
 
-    int findKeyEntry(CharSequence key, long hashcode, DirectBuffer buffer);
+    int findKeyEntry(CharSequence key,  DirectBuffer buffer);
+
+    long getHashcode(CharSequence key);
 }

@@ -1,5 +1,7 @@
 package com.isaiahp.concurrent.map.descriptors;
 
+import com.isaiahp.ascii.Ascii;
+import com.isaiahp.ascii.MutableAsciiSequence;
 import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
@@ -35,8 +37,9 @@ public class DefaultKeyIndexDescriptor implements KeyIndexDescriptor {
     private static final byte DELETED_CHAR = '\1';
     private final int maxKeySize;
     private final int maxNumberOfKeys;
-
-    public DefaultKeyIndexDescriptor(int maxKeySize, int maxNumberOfKeys) {
+    private final Ascii.Hasher hasher;
+    public DefaultKeyIndexDescriptor(int maxKeySize, int maxNumberOfKeys, Ascii.Hasher hasher) {
+        this.hasher = hasher;
         if (!BitUtil.isPowerOfTwo(maxNumberOfKeys)) {
             throw new IllegalArgumentException("max key must be power of two");
         }
@@ -65,7 +68,8 @@ public class DefaultKeyIndexDescriptor implements KeyIndexDescriptor {
     }
 
     @Override
-    public int findKeyEntry(CharSequence key, long hashcode, DirectBuffer buffer) {
+    public int findKeyEntry(CharSequence key, DirectBuffer buffer) {
+        final long hashcode = getHashcode(key);
         final int mask = maxKeys() -1;
         final int hashIndex = (int) (hashcode & mask);
         for (int i = 0; i < mask; i++) {
@@ -79,6 +83,11 @@ public class DefaultKeyIndexDescriptor implements KeyIndexDescriptor {
         }
         assert false : "all slots full";
         return ~maxKeys();// notify all items scanned
+    }
+
+    @Override
+    public long getHashcode(CharSequence key) {
+        return hasher.hash(key);
     }
 
     @Override
@@ -134,21 +143,24 @@ public class DefaultKeyIndexDescriptor implements KeyIndexDescriptor {
         return maxKeySize;
     }
 
-    @Override
-    public long requiredCapacity() {
+
+    public static long computeRequiredCapacity(int maxKeySize, int maxNumberOfKeys) {
         return BitUtil.align(maxKeySize * maxNumberOfKeys, 8);
     }
 
     @Override
-    public int copyBytes(int entryIndex, DirectBuffer src, byte[] dst, int dstOffset) {
+    public int copyBytes(int entryIndex, DirectBuffer src, MutableAsciiSequence dst) {
         final int srcOffset = getKeyOffsetForIndex(entryIndex);
+        int length = 0;
         for (int i = 0; i < maxKeySize; i++) {
             final byte b = src.getByte(srcOffset + i);
+
             if (b == '\0') {
-                return i;
+                break;
             }
-            dst[dstOffset + i] = b;
+            length = i;
         }
-        return maxKeySize;
+        dst.copyFrom(src, srcOffset, length);
+        return length;
     }
 }

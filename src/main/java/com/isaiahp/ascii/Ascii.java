@@ -1,6 +1,7 @@
 package com.isaiahp.ascii;
 
-import java.nio.charset.Charset;
+import org.agrona.DirectBuffer;
+
 import java.nio.charset.StandardCharsets;
 
 public class Ascii {
@@ -15,19 +16,36 @@ public class Ascii {
         return true;
     }
 
-    public static boolean decodePrefix(long encoded, MutableString mutableString) {
+    public static boolean decodePrefix(long encoded, MutableAsciiSequence mutableString) {
         final long mask = 0x7F;
         int i = 0;
         for (; i < 9; i++) {
             final byte ch = (byte) ((encoded >> (i * 7)) & mask);
-            if (ch == 0) {
+            if (ch != 0) {
+                mutableString.setAt(i, ch);
+            }
+            else {
                 break;
-            } else {
-                mutableString.chars[i] = ch;
             }
         }
-        mutableString.size = i;
+        mutableString.setSize(i);
         return encoded >= 0; // top bit is set if this prefix is not the entire string
+    }
+
+    public static int decodePrefix(long encoded, byte[] buffer, int offset) {
+        final long mask = 0x7F;
+        int i = 0;
+        for (; i < 9; i++) {
+            final byte ch = (byte) ((encoded >> (i * 7)) & mask);
+            if (ch != 0) {
+                buffer[i + offset] = ch;
+            }
+            else {
+                break;
+            }
+        }
+        return i;
+
     }
 
     public interface Hasher {
@@ -85,7 +103,7 @@ public class Ascii {
         }
         return encoded;
     }
-    public static class MutableString implements CharSequence {
+    public static class MutableString implements CharSequence, MutableAsciiSequence {
 
         private static final Hasher hasher = Ascii::hash;
         public static long hash(CharSequence ch) {
@@ -144,6 +162,29 @@ public class Ascii {
                 return Ascii.equals(this, chSequence);
             }
             return false;
+        }
+
+        @Override
+        public void copyFrom(DirectBuffer buffer, int offset, int length) {
+            for (int i = 0; i < length; i++) {
+                this.chars[i] = buffer.getByte(offset + i);
+            }
+            this.size = length;
+        }
+
+        @Override
+        public void setAt(int index, byte ch) {
+            chars[index] = ch;
+        }
+
+        @Override
+        public void setSize(int i) {
+            size = i;
+        }
+
+        @Override
+        public int size() {
+            return size;
         }
 
         @Override
