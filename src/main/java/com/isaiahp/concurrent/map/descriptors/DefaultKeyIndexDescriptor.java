@@ -69,7 +69,7 @@ public class DefaultKeyIndexDescriptor implements KeyIndexDescriptor {
 
     @Override
     public int findKeyEntry(CharSequence key, DirectBuffer buffer) {
-        final long hashcode = getHashcode(key);
+        final long hashcode = computeKeyHash(key);
         final int mask = maxKeys() -1;
         final int hashIndex = (int) (hashcode & mask);
         for (int i = 0; i < mask; i++) {
@@ -86,7 +86,7 @@ public class DefaultKeyIndexDescriptor implements KeyIndexDescriptor {
     }
 
     @Override
-    public long getHashcode(CharSequence key) {
+    public long computeKeyHash(CharSequence key) {
         return hasher.hash(key);
     }
 

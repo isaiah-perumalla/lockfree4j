@@ -5,8 +5,6 @@ import org.agrona.DirectBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class Ascii {
-    public static final Hasher DJB_2_HASH = new Djb2Hash();
-    public static final Hasher DEFAULT_HASH = new DefaultHash();
     public static boolean equals(CharSequence a, CharSequence b) {
         assert a != null && b != null;
         if (a.length() != b.length()) return false;
@@ -79,15 +77,6 @@ public class Ascii {
         return h;
     }
 
-    public static class Djb2Hash implements Hasher {
-
-        @Override
-        public long hash(CharSequence c) {
-
-            return djb2Hash(c);
-        }
-    }
-
     public static long encodePrefix(CharSequence cs) {
         long encoded = 0;
         final byte mask = 0x7F; //0111 1111
@@ -105,7 +94,7 @@ public class Ascii {
     }
     public static class MutableString implements CharSequence, MutableAsciiSequence {
 
-        private static final Hasher hasher = Ascii::hash;
+        private static final Hasher hasher = Ascii::djb2Hash;
         public static long hash(CharSequence ch) {
             if (ch == null) return 0;
             if (ch instanceof MutableString) {
@@ -206,10 +195,4 @@ public class Ascii {
 
     }
 
-    private static class DefaultHash implements Hasher {
-        @Override
-        public long hash(CharSequence c) {
-            return Ascii.hash(c);
-        }
-    }
 }

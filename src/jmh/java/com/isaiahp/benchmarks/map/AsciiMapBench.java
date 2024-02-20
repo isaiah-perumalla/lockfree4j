@@ -71,7 +71,7 @@ public class AsciiMapBench {
         UnsafeBuffer buffer2 = new UnsafeBuffer(new byte[(int) CacheFriendlyKeyIndexDescriptor.computeRequiredCapacity(128, maxKeys)]);;
         asciiIndexHashCodeMap = new AsciiIndexMap(buffer2, cacheFriendly);
         stdHashSet = new HashMap<>();
-        agronaMap = new Object2IntHashMap<>( -1);
+        agronaMap = new Object2IntHashMap<>(128, loadFactor, -1);
         String file = "/home/isaiahp/workspace/seqlock4j/src/jmh/resources/symbols.txt";
         String shortSymsFile = "/home/isaiahp/workspace/seqlock4j/src/jmh/resources/short_syms.txt";
 

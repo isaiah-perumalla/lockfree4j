@@ -27,5 +27,5 @@ public interface KeyIndexDescriptor {
 
     int findKeyEntry(CharSequence key,  DirectBuffer buffer);
 
-    long getHashcode(CharSequence key);
+    long computeKeyHash(CharSequence key);
 }

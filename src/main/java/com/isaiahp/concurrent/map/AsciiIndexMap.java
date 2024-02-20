@@ -17,7 +17,7 @@ public class AsciiIndexMap {
     }
 
     public int addKey(CharSequence key) {
-        final long hashcode = keyIndexDescriptor.getHashcode(key);
+        final long hashcode = keyIndexDescriptor.computeKeyHash(key);
         assert hashcode != 0  : "invalid hash code";
         final int hashIndex = (int) (hashcode & mask);
 
