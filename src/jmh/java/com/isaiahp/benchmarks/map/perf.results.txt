@@ -715,3 +715,613 @@ AsciiMapBench.agronaMap:·ipc            0.9          false  avgt        3.695  
 AsciiMapBench.agronaMap:·perf           0.9          false  avgt          NaN                ---
 08:21:27 isaiahp@isaiahp-XPS seqlock4j ±|shm_map ✗|→
 
+
+
+# JMH version: 1.35
+# VM version: JDK 17.0.9, OpenJDK 64-Bit Server VM, 17.0.9+8-LTS
+# VM invoker: /opt/jdks/zulu17/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5000 ms each
+# Measurement: 5 iterations, 5000 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap
+# Parameters: (loadFactor = 0.75, shortString = true)
+
+# Run progress: 0.00% complete, ETA 00:06:40
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 40.358 ns/op
+# Warmup Iteration   2: 40.201 ns/op
+# Warmup Iteration   3: 41.028 ns/op
+# Warmup Iteration   4: 43.394 ns/op
+# Warmup Iteration   5: 40.913 ns/op
+Iteration   1: 41.013 ns/op
+Iteration   2: 41.079 ns/op
+Iteration   3: 41.040 ns/op
+Iteration   4: 41.084 ns/op
+Iteration   5: 41.043 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap":
+  41.052 ±(99.9%) 0.115 ns/op [Average]
+  (min, avg, max) = (41.013, 41.052, 41.084), stdev = 0.030
+  CI (99.9%): [40.937, 41.167] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         24,878.96 msec task-clock                       #    1.001 CPUs utilized
+               970      context-switches                 #   38.989 /sec
+                77      cpu-migrations                   #    3.095 /sec
+               159      page-faults                      #    6.391 /sec
+    75,731,013,187      cycles                           #    3.044 GHz                         (28.64%)
+    16,516,698,773      stalled-cycles-frontend          #   21.81% frontend cycles idle        (28.68%)
+   253,761,183,508      instructions                     #    3.35  insn per cycle
+                                                  #    0.07  stalled cycles per insn     (35.85%)
+    36,767,257,533      branches                         #    1.478 G/sec                       (35.86%)
+         2,125,575      branch-misses                    #    0.01% of all branches             (35.88%)
+    56,917,361,199      L1-dcache-loads                  #    2.288 G/sec                       (28.50%)
+         3,659,739      L1-dcache-load-misses            #    0.01% of all L1-dcache accesses   (14.32%)
+         1,146,720      LLC-loads                        #   46.092 K/sec                       (14.32%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         4,670,679      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (21.46%)
+    56,837,603,510      dTLB-loads                       #    2.285 G/sec                       (21.40%)
+           164,762      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (14.30%)
+           105,066      iTLB-loads                       #    4.223 K/sec                       (14.30%)
+            70,132      iTLB-load-misses                 #   66.75% of all iTLB cache accesses  (21.44%)
+   <not supported>      L1-dcache-prefetches
+           145,529      L1-dcache-prefetch-misses        #    5.849 K/sec                       (28.57%)
+
+      24.846125502 seconds time elapsed
+
+      51.673761000 seconds user
+       0.183647000 seconds sys
+
+
+
+
+# JMH version: 1.35
+# VM version: JDK 17.0.9, OpenJDK 64-Bit Server VM, 17.0.9+8-LTS
+# VM invoker: /opt/jdks/zulu17/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5000 ms each
+# Measurement: 5 iterations, 5000 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap
+# Parameters: (loadFactor = 0.75, shortString = false)
+
+# Run progress: 12.50% complete, ETA 00:05:56
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 104.995 ns/op
+# Warmup Iteration   2: 104.673 ns/op
+# Warmup Iteration   3: 107.628 ns/op
+# Warmup Iteration   4: 107.862 ns/op
+# Warmup Iteration   5: 107.817 ns/op
+Iteration   1: 107.998 ns/op
+Iteration   2: 107.794 ns/op
+Iteration   3: 107.799 ns/op
+Iteration   4: 108.167 ns/op
+Iteration   5: 108.059 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap":
+  107.963 ±(99.9%) 0.632 ns/op [Average]
+  (min, avg, max) = (107.794, 107.963, 108.167), stdev = 0.164
+  CI (99.9%): [107.332, 108.595] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         24,725.54 msec task-clock                       #    1.001 CPUs utilized
+               978      context-switches                 #   39.554 /sec
+                67      cpu-migrations                   #    2.710 /sec
+               174      page-faults                      #    7.037 /sec
+    75,099,062,775      cycles                           #    3.037 GHz                         (28.64%)
+     5,605,972,992      stalled-cycles-frontend          #    7.46% frontend cycles idle        (28.71%)
+   282,863,405,151      instructions                     #    3.77  insn per cycle
+                                                  #    0.02  stalled cycles per insn     (35.87%)
+    36,186,612,850      branches                         #    1.464 G/sec                       (35.88%)
+         1,829,145      branch-misses                    #    0.01% of all branches             (35.89%)
+    56,563,008,868      L1-dcache-loads                  #    2.288 G/sec                       (28.49%)
+         1,603,755      L1-dcache-load-misses            #    0.00% of all L1-dcache accesses   (14.31%)
+           611,094      LLC-loads                        #   24.715 K/sec                       (14.30%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         3,808,498      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (21.46%)
+    56,311,793,513      dTLB-loads                       #    2.277 G/sec                       (21.41%)
+           133,875      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (14.27%)
+            86,448      iTLB-loads                       #    3.496 K/sec                       (14.30%)
+            52,566      iTLB-load-misses                 #   60.81% of all iTLB cache accesses  (21.43%)
+   <not supported>      L1-dcache-prefetches
+           189,625      L1-dcache-prefetch-misses        #    7.669 K/sec                       (28.57%)
+
+      24.691507138 seconds time elapsed
+
+      51.504584000 seconds user
+       0.156945000 seconds sys
+
+
+
+
+# JMH version: 1.35
+# VM version: JDK 17.0.9, OpenJDK 64-Bit Server VM, 17.0.9+8-LTS
+# VM invoker: /opt/jdks/zulu17/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5000 ms each
+# Measurement: 5 iterations, 5000 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap
+# Parameters: (loadFactor = 0.9, shortString = true)
+
+# Run progress: 25.00% complete, ETA 00:05:05
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 71.869 ns/op
+# Warmup Iteration   2: 69.844 ns/op
+# Warmup Iteration   3: 68.426 ns/op
+# Warmup Iteration   4: 68.547 ns/op
+# Warmup Iteration   5: 69.620 ns/op
+Iteration   1: 68.700 ns/op
+Iteration   2: 68.616 ns/op
+Iteration   3: 68.831 ns/op
+Iteration   4: 69.766 ns/op
+Iteration   5: 68.644 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap":
+  68.911 ±(99.9%) 1.867 ns/op [Average]
+  (min, avg, max) = (68.616, 68.911, 69.766), stdev = 0.485
+  CI (99.9%): [67.044, 70.779] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         24,772.76 msec task-clock                       #    1.002 CPUs utilized
+               964      context-switches                 #   38.914 /sec
+                86      cpu-migrations                   #    3.472 /sec
+               175      page-faults                      #    7.064 /sec
+    75,404,465,604      cycles                           #    3.044 GHz                         (28.61%)
+     8,153,907,308      stalled-cycles-frontend          #   10.81% frontend cycles idle        (28.69%)
+   282,134,846,021      instructions                     #    3.74  insn per cycle
+                                                  #    0.03  stalled cycles per insn     (35.86%)
+    53,518,755,829      branches                         #    2.160 G/sec                       (35.88%)
+         2,178,463      branch-misses                    #    0.00% of all branches             (35.90%)
+    68,559,486,601      L1-dcache-loads                  #    2.768 G/sec                       (28.50%)
+         2,795,072      L1-dcache-load-misses            #    0.00% of all L1-dcache accesses   (14.27%)
+           799,746      LLC-loads                        #   32.283 K/sec                       (14.29%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         3,907,849      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (21.45%)
+    68,464,716,557      dTLB-loads                       #    2.764 G/sec                       (21.49%)
+           190,565      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (20.08%)
+            91,981      iTLB-loads                       #    3.713 K/sec                       (14.30%)
+            58,363      iTLB-load-misses                 #   63.45% of all iTLB cache accesses  (21.44%)
+   <not supported>      L1-dcache-prefetches
+           188,591      L1-dcache-prefetch-misses        #    7.613 K/sec                       (28.57%)
+
+      24.735553962 seconds time elapsed
+
+      51.732513000 seconds user
+       0.222391000 seconds sys
+
+
+
+
+# JMH version: 1.35
+# VM version: JDK 17.0.9, OpenJDK 64-Bit Server VM, 17.0.9+8-LTS
+# VM invoker: /opt/jdks/zulu17/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5000 ms each
+# Measurement: 5 iterations, 5000 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap
+# Parameters: (loadFactor = 0.9, shortString = false)
+
+# Run progress: 37.50% complete, ETA 00:04:14
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 248.543 ns/op
+# Warmup Iteration   2: 247.907 ns/op
+# Warmup Iteration   3: 257.079 ns/op
+# Warmup Iteration   4: 257.196 ns/op
+# Warmup Iteration   5: 255.106 ns/op
+Iteration   1: 257.234 ns/op
+Iteration   2: 254.275 ns/op
+Iteration   3: 254.207 ns/op
+Iteration   4: 255.406 ns/op
+Iteration   5: 254.395 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap":
+  255.104 ±(99.9%) 4.955 ns/op [Average]
+  (min, avg, max) = (254.207, 255.104, 257.234), stdev = 1.287
+  CI (99.9%): [250.149, 260.059] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         24,779.07 msec task-clock                       #    1.002 CPUs utilized
+               987      context-switches                 #   39.832 /sec
+                63      cpu-migrations                   #    2.542 /sec
+               194      page-faults                      #    7.829 /sec
+    75,250,269,517      cycles                           #    3.037 GHz                         (28.63%)
+     3,782,978,727      stalled-cycles-frontend          #    5.03% frontend cycles idle        (28.69%)
+   265,774,859,227      instructions                     #    3.53  insn per cycle
+                                                  #    0.01  stalled cycles per insn     (35.86%)
+    32,298,860,739      branches                         #    1.303 G/sec                       (35.89%)
+         2,483,936      branch-misses                    #    0.01% of all branches             (35.91%)
+    47,985,383,960      L1-dcache-loads                  #    1.937 G/sec                       (28.49%)
+         2,536,613      L1-dcache-load-misses            #    0.01% of all L1-dcache accesses   (14.30%)
+         1,218,517      LLC-loads                        #   49.175 K/sec                       (14.33%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         3,967,937      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (21.49%)
+    47,888,982,489      dTLB-loads                       #    1.933 G/sec                       (21.41%)
+           168,695      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (14.28%)
+            51,531      iTLB-loads                       #    2.080 K/sec                       (14.30%)
+            56,747      iTLB-load-misses                 #  110.12% of all iTLB cache accesses  (21.44%)
+   <not supported>      L1-dcache-prefetches
+           247,588      L1-dcache-prefetch-misses        #    9.992 K/sec                       (28.57%)
+
+      24.739939048 seconds time elapsed
+
+      51.813530000 seconds user
+       0.194068000 seconds sys
+
+
+
+
+# JMH version: 1.35
+# VM version: JDK 17.0.9, OpenJDK 64-Bit Server VM, 17.0.9+8-LTS
+# VM invoker: /opt/jdks/zulu17/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5000 ms each
+# Measurement: 5 iterations, 5000 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap
+# Parameters: (loadFactor = 0.75, shortString = true)
+
+# Run progress: 50.00% complete, ETA 00:03:23
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 37.124 ns/op
+# Warmup Iteration   2: 37.113 ns/op
+# Warmup Iteration   3: 36.430 ns/op
+# Warmup Iteration   4: 36.363 ns/op
+# Warmup Iteration   5: 36.363 ns/op
+Iteration   1: 36.371 ns/op
+Iteration   2: 36.455 ns/op
+Iteration   3: 36.555 ns/op
+Iteration   4: 36.518 ns/op
+Iteration   5: 36.367 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap":
+  36.453 ±(99.9%) 0.327 ns/op [Average]
+  (min, avg, max) = (36.367, 36.453, 36.555), stdev = 0.085
+  CI (99.9%): [36.127, 36.780] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         24,743.41 msec task-clock                       #    1.002 CPUs utilized
+               942      context-switches                 #   38.071 /sec
+                68      cpu-migrations                   #    2.748 /sec
+               284      page-faults                      #   11.478 /sec
+    75,202,081,965      cycles                           #    3.039 GHz                         (28.64%)
+    16,158,394,961      stalled-cycles-frontend          #   21.49% frontend cycles idle        (28.73%)
+   254,611,510,826      instructions                     #    3.39  insn per cycle
+                                                  #    0.06  stalled cycles per insn     (35.89%)
+    32,352,840,242      branches                         #    1.308 G/sec                       (35.90%)
+         2,309,125      branch-misses                    #    0.01% of all branches             (35.94%)
+    56,963,688,041      L1-dcache-loads                  #    2.302 G/sec                       (28.52%)
+         3,038,600      L1-dcache-load-misses            #    0.01% of all L1-dcache accesses   (14.30%)
+         1,320,699      LLC-loads                        #   53.376 K/sec                       (14.30%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         4,229,465      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (21.43%)
+    56,964,665,149      dTLB-loads                       #    2.302 G/sec                       (21.36%)
+           148,162      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (14.28%)
+            49,717      iTLB-loads                       #    2.009 K/sec                       (14.30%)
+            67,774      iTLB-load-misses                 #  136.32% of all iTLB cache accesses  (21.45%)
+   <not supported>      L1-dcache-prefetches
+           146,294      L1-dcache-prefetch-misses        #    5.912 K/sec                       (28.59%)
+
+      24.705332825 seconds time elapsed
+
+      51.579646000 seconds user
+       0.147331000 seconds sys
+
+
+
+
+# JMH version: 1.35
+# VM version: JDK 17.0.9, OpenJDK 64-Bit Server VM, 17.0.9+8-LTS
+# VM invoker: /opt/jdks/zulu17/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5000 ms each
+# Measurement: 5 iterations, 5000 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap
+# Parameters: (loadFactor = 0.75, shortString = false)
+
+# Run progress: 62.50% complete, ETA 00:02:32
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 93.159 ns/op
+# Warmup Iteration   2: 90.285 ns/op
+# Warmup Iteration   3: 92.130 ns/op
+# Warmup Iteration   4: 92.107 ns/op
+# Warmup Iteration   5: 92.486 ns/op
+Iteration   1: 92.596 ns/op
+Iteration   2: 92.367 ns/op
+Iteration   3: 92.321 ns/op
+Iteration   4: 92.641 ns/op
+Iteration   5: 93.840 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap":
+  92.753 ±(99.9%) 2.400 ns/op [Average]
+  (min, avg, max) = (92.321, 92.753, 93.840), stdev = 0.623
+  CI (99.9%): [90.353, 95.153] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         24,732.68 msec task-clock                       #    1.002 CPUs utilized
+             1,117      context-switches                 #   45.163 /sec
+                67      cpu-migrations                   #    2.709 /sec
+               165      page-faults                      #    6.671 /sec
+    74,997,653,976      cycles                           #    3.032 GHz                         (28.65%)
+     8,114,020,983      stalled-cycles-frontend          #   10.82% frontend cycles idle        (28.71%)
+   269,506,641,655      instructions                     #    3.59  insn per cycle
+                                                  #    0.03  stalled cycles per insn     (35.87%)
+    33,633,817,287      branches                         #    1.360 G/sec                       (35.87%)
+         2,213,981      branch-misses                    #    0.01% of all branches             (35.88%)
+    55,586,603,415      L1-dcache-loads                  #    2.247 G/sec                       (22.73%)
+         2,382,839      L1-dcache-load-misses            #    0.00% of all L1-dcache accesses   (17.20%)
+           701,121      LLC-loads                        #   28.348 K/sec                       (14.31%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         3,881,365      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (21.46%)
+    55,657,234,279      dTLB-loads                       #    2.250 G/sec                       (21.41%)
+           179,684      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (14.27%)
+           104,248      iTLB-loads                       #    4.215 K/sec                       (14.27%)
+            59,595      iTLB-load-misses                 #   57.17% of all iTLB cache accesses  (21.44%)
+   <not supported>      L1-dcache-prefetches
+           167,632      L1-dcache-prefetch-misses        #    6.778 K/sec                       (28.58%)
+
+      24.693642142 seconds time elapsed
+
+      51.509957000 seconds user
+       0.181886000 seconds sys
+
+
+
+
+# JMH version: 1.35
+# VM version: JDK 17.0.9, OpenJDK 64-Bit Server VM, 17.0.9+8-LTS
+# VM invoker: /opt/jdks/zulu17/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5000 ms each
+# Measurement: 5 iterations, 5000 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap
+# Parameters: (loadFactor = 0.9, shortString = true)
+
+# Run progress: 75.00% complete, ETA 00:01:41
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 74.088 ns/op
+# Warmup Iteration   2: 72.447 ns/op
+# Warmup Iteration   3: 71.811 ns/op
+# Warmup Iteration   4: 73.651 ns/op
+# Warmup Iteration   5: 72.369 ns/op
+Iteration   1: 76.794 ns/op
+Iteration   2: 73.518 ns/op
+Iteration   3: 73.619 ns/op
+Iteration   4: 74.180 ns/op
+Iteration   5: 72.257 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap":
+  74.074 ±(99.9%) 6.450 ns/op [Average]
+  (min, avg, max) = (72.257, 74.074, 76.794), stdev = 1.675
+  CI (99.9%): [67.624, 80.524] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         24,771.64 msec task-clock                       #    1.002 CPUs utilized
+               998      context-switches                 #   40.288 /sec
+                88      cpu-migrations                   #    3.552 /sec
+               183      page-faults                      #    7.387 /sec
+    74,799,967,916      cycles                           #    3.020 GHz                         (28.64%)
+    21,570,799,241      stalled-cycles-frontend          #   28.84% frontend cycles idle        (28.71%)
+   234,417,304,142      instructions                     #    3.13  insn per cycle
+                                                  #    0.09  stalled cycles per insn     (35.87%)
+    36,589,799,623      branches                         #    1.477 G/sec                       (35.88%)
+         2,667,022      branch-misses                    #    0.01% of all branches             (35.89%)
+    51,852,909,653      L1-dcache-loads                  #    2.093 G/sec                       (32.81%)
+         3,716,298      L1-dcache-load-misses            #    0.01% of all L1-dcache accesses   (27.28%)
+         1,413,909      LLC-loads                        #   57.078 K/sec                       (22.95%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         5,863,996      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (25.81%)
+    51,646,980,530      dTLB-loads                       #    2.085 G/sec                       (21.42%)
+           317,021      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (14.30%)
+           131,956      iTLB-loads                       #    5.327 K/sec                       (14.30%)
+           107,830      iTLB-load-misses                 #   81.72% of all iTLB cache accesses  (21.45%)
+   <not supported>      L1-dcache-prefetches
+           244,430      L1-dcache-prefetch-misses        #    9.867 K/sec                       (28.58%)
+
+      24.734163291 seconds time elapsed
+
+      51.575806000 seconds user
+       0.244247000 seconds sys
+
+
+
+
+# JMH version: 1.35
+# VM version: JDK 17.0.9, OpenJDK 64-Bit Server VM, 17.0.9+8-LTS
+# VM invoker: /opt/jdks/zulu17/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5000 ms each
+# Measurement: 5 iterations, 5000 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap
+# Parameters: (loadFactor = 0.9, shortString = false)
+
+# Run progress: 87.50% complete, ETA 00:00:50
+# Fork: 1 of 1
+# Preparing profilers: LinuxPerfProfiler
+# Profilers consume stderr from target VM, use -v EXTRA to copy to console
+# Warmup Iteration   1: 138.165 ns/op
+# Warmup Iteration   2: 135.401 ns/op
+# Warmup Iteration   3: 137.187 ns/op
+# Warmup Iteration   4: 138.043 ns/op
+# Warmup Iteration   5: 134.320 ns/op
+Iteration   1: 135.360 ns/op
+Iteration   2: 137.320 ns/op
+Iteration   3: 133.323 ns/op
+Iteration   4: 132.996 ns/op
+Iteration   5: 133.817 ns/op
+# Processing profiler results: LinuxPerfProfiler
+
+
+Result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap":
+  134.563 ±(99.9%) 6.884 ns/op [Average]
+  (min, avg, max) = (132.996, 134.563, 137.320), stdev = 1.788
+  CI (99.9%): [127.680, 141.447] (assumes normal distribution)
+
+Secondary result "com.isaiahp.benchmarks.map.AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf":
+Perf stats:
+--------------------------------------------------
+
+         24,780.22 msec task-clock                       #    1.002 CPUs utilized
+               954      context-switches                 #   38.498 /sec
+               127      cpu-migrations                   #    5.125 /sec
+               185      page-faults                      #    7.466 /sec
+    75,121,779,487      cycles                           #    3.032 GHz                         (28.64%)
+    15,075,177,947      stalled-cycles-frontend          #   20.07% frontend cycles idle        (28.66%)
+   266,746,061,431      instructions                     #    3.55  insn per cycle
+                                                  #    0.06  stalled cycles per insn     (35.89%)
+    34,576,911,182      branches                         #    1.395 G/sec                       (35.89%)
+         1,973,457      branch-misses                    #    0.01% of all branches             (35.93%)
+    49,947,682,808      L1-dcache-loads                  #    2.016 G/sec                       (28.50%)
+         2,262,076      L1-dcache-load-misses            #    0.00% of all L1-dcache accesses   (14.32%)
+           999,395      LLC-loads                        #   40.330 K/sec                       (14.32%)
+   <not supported>      LLC-load-misses
+   <not supported>      L1-icache-loads
+         4,733,418      L1-icache-load-misses            #    0.00% of all L1-icache accesses   (21.49%)
+    49,910,653,117      dTLB-loads                       #    2.014 G/sec                       (21.43%)
+           350,702      dTLB-load-misses                 #    0.00% of all dTLB cache accesses  (14.30%)
+           216,802      iTLB-loads                       #    8.749 K/sec                       (14.29%)
+           178,713      iTLB-load-misses                 #   82.43% of all iTLB cache accesses  (21.45%)
+   <not supported>      L1-dcache-prefetches
+           279,770      L1-dcache-prefetch-misses        #   11.290 K/sec                       (28.57%)
+
+      24.736858544 seconds time elapsed
+
+      51.617915000 seconds user
+       0.209069000 seconds sys
+
+
+
+
+# Run complete. Total time: 00:06:46
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                             (loadFactor)  (shortString)  Mode  Cnt    Score   Error      Units
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap                 0.75           true  avgt    5   41.052 ± 0.115      ns/op
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·cpi            0.75           true  avgt         0.298          clks/insn
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·ipc            0.75           true  avgt         3.351          insns/clk
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·perf           0.75           true  avgt           NaN                ---
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap                 0.75          false  avgt    5  107.963 ± 0.632      ns/op
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·cpi            0.75          false  avgt         0.265          clks/insn
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·ipc            0.75          false  avgt         3.767          insns/clk
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·perf           0.75          false  avgt           NaN                ---
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap                  0.9           true  avgt    5   68.911 ± 1.867      ns/op
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·cpi             0.9           true  avgt         0.267          clks/insn
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·ipc             0.9           true  avgt         3.742          insns/clk
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·perf            0.9           true  avgt           NaN                ---
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap                  0.9          false  avgt    5  255.104 ± 4.955      ns/op
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·cpi             0.9          false  avgt         0.283          clks/insn
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·ipc             0.9          false  avgt         3.532          insns/clk
+AsciiMapBench.asciiMapBaseLineLayoutSearchMap:·perf            0.9          false  avgt           NaN                ---
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap                0.75           true  avgt    5   36.453 ± 0.327      ns/op
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·cpi           0.75           true  avgt         0.295          clks/insn
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·ipc           0.75           true  avgt         3.386          insns/clk
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf          0.75           true  avgt           NaN                ---
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap                0.75          false  avgt    5   92.753 ± 2.400      ns/op
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·cpi           0.75          false  avgt         0.278          clks/insn
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·ipc           0.75          false  avgt         3.594          insns/clk
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf          0.75          false  avgt           NaN                ---
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap                 0.9           true  avgt    5   74.074 ± 6.450      ns/op
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·cpi            0.9           true  avgt         0.319          clks/insn
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·ipc            0.9           true  avgt         3.134          insns/clk
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf           0.9           true  avgt           NaN                ---
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap                 0.9          false  avgt    5  134.563 ± 6.884      ns/op
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·cpi            0.9          false  avgt         0.282          clks/insn
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·ipc            0.9          false  avgt         3.551          insns/clk
+AsciiMapBench.asciiMapOptimizedLayoutSearchMap:·perf           0.9          false  avgt           NaN                ---
+08:30:46 isaiahp@isaiahp-XPS seqlock4j ±|shm_map ✗|→
